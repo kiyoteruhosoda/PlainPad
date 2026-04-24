@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterbase/application/usecases/theme/get_theme_preference_usecase.dart';
-import 'package:flutterbase/application/usecases/theme/set_theme_preference_usecase.dart';
-import 'package:flutterbase/domain/repositories/theme_preference_repository.dart';
-import 'package:flutterbase/shared/value_objects/app_theme_mode.dart';
+import 'package:plainpad/application/usecases/theme/get_theme_preference_usecase.dart';
+import 'package:plainpad/application/usecases/theme/set_theme_preference_usecase.dart';
+import 'package:plainpad/domain/repositories/theme_preference_repository.dart';
+import 'package:plainpad/shared/value_objects/app_theme_mode.dart';
 
 // ─── Fake repository ──────────────────────────────────────────────────────────
 

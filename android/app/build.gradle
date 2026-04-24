@@ -44,8 +44,8 @@ def sharedDebugKeystore = rootProject.file("app/debug.keystore")
 // Single source of truth for namespace + applicationId + the APK/AAB
 // base filename.  `scripts/rename_app.sh` rewrites the two string
 // constants below, and the archives base name derives from them.
-def appNamespace     = "com.example.flutterbase"
-def appApplicationId = "com.example.flutterbase"
+def appNamespace     = "com.nolumia.plainpad"
+def appApplicationId = "com.nolumia.plainpad"
 def appArchivesBase  = (project.findProperty("app.archivesBaseName")
     ?: appApplicationId.tokenize('.').last())
 

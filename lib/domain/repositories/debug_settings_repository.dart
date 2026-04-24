@@ -1,4 +1,4 @@
-import 'package:flutterbase/shared/logging/log_level.dart';
+import 'package:plainpad/shared/logging/log_level.dart';
 
 /// Persists developer/debug preferences.
 abstract interface class DebugSettingsRepository {

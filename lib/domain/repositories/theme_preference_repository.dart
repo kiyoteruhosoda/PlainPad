@@ -1,4 +1,4 @@
-import 'package:flutterbase/shared/value_objects/app_theme_mode.dart';
+import 'package:plainpad/shared/value_objects/app_theme_mode.dart';
 
 /// Persists and retrieves the user's theme preference.
 ///

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/app/bootstrap/app_router.dart';
-import 'package:flutterbase/app/di/service_locator.dart';
-import 'package:flutterbase/presentation/pages/main_page.dart';
-import 'package:flutterbase/presentation/viewmodels/theme_viewmodel.dart';
-import 'package:flutterbase/shared/config/app_config.dart';
-import 'package:flutterbase/shared/logging/app_logger.dart';
-import 'package:flutterbase/shared/theme/app_theme.dart';
+import 'package:plainpad/app/bootstrap/app_router.dart';
+import 'package:plainpad/app/di/service_locator.dart';
+import 'package:plainpad/presentation/pages/main_page.dart';
+import 'package:plainpad/presentation/viewmodels/theme_viewmodel.dart';
+import 'package:plainpad/shared/config/app_config.dart';
+import 'package:plainpad/shared/logging/app_logger.dart';
+import 'package:plainpad/shared/theme/app_theme.dart';
 
 /// Root widget. Listens to [ThemeViewModel] for live theme switching.
 class AppWidget extends StatefulWidget {

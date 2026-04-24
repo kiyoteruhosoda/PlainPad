@@ -1,4 +1,4 @@
-import 'package:flutterbase/application/dto/app_info_dto.dart';
+import 'package:plainpad/application/dto/app_info_dto.dart';
 
 /// Provides build-time and runtime application metadata.
 ///

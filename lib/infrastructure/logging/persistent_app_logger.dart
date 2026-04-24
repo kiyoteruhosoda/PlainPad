@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:flutterbase/shared/logging/app_logger.dart';
-import 'package:flutterbase/shared/logging/log_entry.dart';
-import 'package:flutterbase/shared/logging/log_level.dart';
+import 'package:plainpad/shared/logging/app_logger.dart';
+import 'package:plainpad/shared/logging/log_entry.dart';
+import 'package:plainpad/shared/logging/log_level.dart';
 
 /// [AppLogger] implementation that writes to the console and to rotating
 /// log files under `<documents>/logs/`.

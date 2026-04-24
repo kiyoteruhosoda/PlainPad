@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/shared/theme/theme.dart';
+import 'package:plainpad/shared/theme/theme.dart';
 
 /// DADS-compliant card container.
 class AppCard extends StatelessWidget {

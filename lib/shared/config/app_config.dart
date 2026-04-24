@@ -13,7 +13,7 @@ class AppConfig {
   // ─── Identity ─────────────────────────────────────────────────────
   /// Display name shown in the MaterialApp title, drawer header,
   /// and About page.
-  static const String appName = 'FlutterBase';
+  static const String appName = 'PlainPad';
 
   /// One-line description shown on the About page.
   static const String appDescription =

@@ -1,5 +1,5 @@
-import 'package:flutterbase/domain/repositories/theme_preference_repository.dart';
-import 'package:flutterbase/shared/value_objects/app_theme_mode.dart';
+import 'package:plainpad/domain/repositories/theme_preference_repository.dart';
+import 'package:plainpad/shared/value_objects/app_theme_mode.dart';
 
 /// Persists the user's theme preference.
 final class SetThemePreferenceUseCase {

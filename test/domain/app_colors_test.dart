@@ -2,7 +2,7 @@
 // Kept here to avoid breaking existing CI runs.
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterbase/shared/theme/app_colors.dart';
+import 'package:plainpad/shared/theme/app_colors.dart';
 
 void main() {
   group('AppColors (legacy test location)', () {
