@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plainpad/app/di/service_locator.dart';
+import 'package:plainpad/presentation/pages/editor/editor_page.dart';
 import 'package:plainpad/presentation/viewmodels/debug_settings_viewmodel.dart';
 import 'package:plainpad/presentation/viewmodels/theme_viewmodel.dart';
 import 'package:plainpad/presentation/widgets/ui/widgets.dart';
@@ -22,13 +23,8 @@ class _MainPageState extends State<MainPage> {
   static const List<_TabItem> _tabs = [
     _TabItem(
       label: AppStrings.navHome,
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-    ),
-    _TabItem(
-      label: AppStrings.navSearch,
-      icon: Icons.search_outlined,
-      selectedIcon: Icons.search,
+      icon: Icons.description_outlined,
+      selectedIcon: Icons.description,
     ),
     _TabItem(
       label: AppStrings.navSettings,
@@ -57,13 +53,6 @@ class _MainPageState extends State<MainPage> {
             tooltip: AppStrings.commonMenu,
           ),
         ),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            onPressed: () {},
-            tooltip: AppStrings.commonNotifications,
-          ),
-        ],
       ),
       drawer: ListenableBuilder(
         listenable: sl<DebugSettingsViewModel>(),
@@ -75,7 +64,7 @@ class _MainPageState extends State<MainPage> {
             items: [
               AppDrawerItem(
                 label: AppStrings.navHome,
-                icon: Icons.home_outlined,
+                icon: Icons.description_outlined,
                 isSelected: _selectedIndex == 0,
                 onTap: () {
                   setState(() => _selectedIndex = 0);
@@ -83,20 +72,11 @@ class _MainPageState extends State<MainPage> {
                 },
               ),
               AppDrawerItem(
-                label: AppStrings.navSearch,
-                icon: Icons.search_outlined,
+                label: AppStrings.navSettings,
+                icon: Icons.settings_outlined,
                 isSelected: _selectedIndex == 1,
                 onTap: () {
                   setState(() => _selectedIndex = 1);
-                  Navigator.of(context).pop();
-                },
-              ),
-              AppDrawerItem(
-                label: AppStrings.navSettings,
-                icon: Icons.settings_outlined,
-                isSelected: _selectedIndex == 2,
-                onTap: () {
-                  setState(() => _selectedIndex = 2);
                   Navigator.of(context).pop();
                 },
               ),
@@ -142,6 +122,8 @@ class _MainPageState extends State<MainPage> {
         },
       ),
       body: _buildTabContent(),
+      floatingActionButton:
+          _selectedIndex == 0 ? const EditorFloatingActions() : null,
       bottomNavigationBar: NavigationBar(
         selectedIndex: _selectedIndex,
         onDestinationSelected: (index) =>
@@ -162,107 +144,14 @@ class _MainPageState extends State<MainPage> {
 
   Widget _buildTabContent() {
     return switch (_selectedIndex) {
-      0 => const _HomeContent(),
-      1 => const _SearchContent(),
-      2 => const _SettingsContent(),
-      _ => const _HomeContent(),
+      0 => const EditorPage(),
+      1 => const _SettingsContent(),
+      _ => const EditorPage(),
     };
   }
 }
 
 // ─── Tab Content ─────────────────────────────────────────────────────────────
-
-class _HomeContent extends StatelessWidget {
-  const _HomeContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return ListView(
-      padding: const EdgeInsets.all(AppSpacing.pageMargin),
-      children: [
-        AppSectionHeader(
-          title: AppStrings.homeWelcomeTitle,
-          subtitle: AppConfig.homeSubtitle,
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AppCard(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                AppConfig.homeCardTitle,
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: AppSpacing.sm),
-              Text(
-                AppStrings.homeCardBody,
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
-            ],
-          ),
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AppSectionHeader(title: AppStrings.homeComponentsTitle),
-        const SizedBox(height: AppSpacing.lg),
-        AppPrimaryButton(
-          label: AppStrings.homePrimaryButton,
-          onPressed: () {},
-          width: double.infinity,
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        AppSecondaryButton(
-          label: AppStrings.homeSecondaryButton,
-          onPressed: () {},
-          width: double.infinity,
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        const AppTextField(
-          label: AppStrings.homeTextFieldLabel,
-          hint: AppStrings.homeTextFieldHint,
-        ),
-        const SizedBox(height: AppSpacing.lg),
-        AppListCard(
-          title: AppStrings.homeListCardTitle,
-          subtitle: AppStrings.homeListCardSubtitle,
-          leading: const Icon(Icons.article_outlined),
-          onTap: () {},
-        ),
-        const SizedBox(height: AppSpacing.sm),
-        AppListCard(
-          title: AppStrings.homeListCardItem2,
-          subtitle: AppStrings.homeListCardSubtitle,
-          leading: const Icon(Icons.article_outlined),
-          onTap: () {},
-        ),
-      ],
-    );
-  }
-}
-
-class _SearchContent extends StatelessWidget {
-  const _SearchContent();
-
-  @override
-  Widget build(BuildContext context) {
-    return const Padding(
-      padding: EdgeInsets.all(AppSpacing.pageMargin),
-      child: Column(
-        children: [
-          AppTextField(
-            label: AppStrings.searchFieldLabel,
-            hint: AppStrings.searchFieldHint,
-            prefixIcon: Icon(Icons.search),
-          ),
-          SizedBox(height: AppSpacing.xxxl),
-          AppEmptyView(
-            message: AppStrings.searchEmptyMessage,
-            icon: Icons.search,
-          ),
-        ],
-      ),
-    );
-  }
-}
 
 class _SettingsContent extends StatelessWidget {
   const _SettingsContent();
