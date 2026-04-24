@@ -4,12 +4,16 @@ import android.app.Activity
 import android.content.Intent
 import android.database.Cursor
 import android.net.Uri
+import android.os.Handler
+import android.os.Looper
 import android.provider.OpenableColumns
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
 import java.io.BufferedReader
 import java.io.InputStreamReader
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 /**
  * Hosts the SAF (Storage Access Framework) bridge.
@@ -19,10 +23,22 @@ import java.io.InputStreamReader
  * Users pick documents via [Intent.ACTION_OPEN_DOCUMENT] /
  * [Intent.ACTION_CREATE_DOCUMENT] and the resulting `content://` URIs are
  * read/written as UTF-8 streams.
+ *
+ * Read and write stream the entire document on a background executor so
+ * large files do not block the main thread (and so SAF latency to remote
+ * providers like Drive/Nextcloud does not stall the UI or risk ANR). The
+ * MethodChannel result is always delivered back on the main thread.
  */
 class MainActivity : FlutterActivity() {
 
     private var pendingResult: MethodChannel.Result? = null
+
+    /**
+     * Single-threaded executor dedicated to SAF I/O. One file op at a time
+     * is sufficient for a text editor and keeps request ordering obvious.
+     */
+    private val ioExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
@@ -57,6 +73,11 @@ class MainActivity : FlutterActivity() {
                 else -> result.notImplemented()
             }
         }
+    }
+
+    override fun onDestroy() {
+        ioExecutor.shutdown()
+        super.onDestroy()
     }
 
     private fun pickDocument(result: MethodChannel.Result) {
@@ -111,18 +132,26 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun readDocument(uriString: String, result: MethodChannel.Result) {
-        try {
-            val uri = Uri.parse(uriString)
-            contentResolver.openInputStream(uri)?.use { input ->
-                BufferedReader(InputStreamReader(input, Charsets.UTF_8)).use { reader ->
-                    val content = reader.readText()
-                    result.success(content)
+        ioExecutor.execute {
+            val outcome: IoOutcome = try {
+                val uri = Uri.parse(uriString)
+                val stream = contentResolver.openInputStream(uri)
+                if (stream == null) {
+                    IoOutcome.Error("not_found", "Could not open document for reading")
+                } else {
+                    val content = stream.use { input ->
+                        BufferedReader(InputStreamReader(input, Charsets.UTF_8)).use { reader ->
+                            reader.readText()
+                        }
+                    }
+                    IoOutcome.Success(content)
                 }
-            } ?: result.error("not_found", "Could not open document for reading", null)
-        } catch (e: SecurityException) {
-            result.error("permission_denied", e.message, null)
-        } catch (e: Exception) {
-            result.error("read_failed", e.message, null)
+            } catch (e: SecurityException) {
+                IoOutcome.Error("permission_denied", e.message)
+            } catch (e: Exception) {
+                IoOutcome.Error("read_failed", e.message)
+            }
+            post { outcome.deliverTo(result) }
         }
     }
 
@@ -131,20 +160,32 @@ class MainActivity : FlutterActivity() {
         content: String,
         result: MethodChannel.Result,
     ) {
-        try {
-            val uri = Uri.parse(uriString)
-            // "wt" truncates the file before writing so shortened content
-            // does not leave stale bytes at the tail.
-            contentResolver.openOutputStream(uri, "wt")?.use { output ->
-                output.write(content.toByteArray(Charsets.UTF_8))
-                output.flush()
-                result.success(null)
-            } ?: result.error("not_found", "Could not open document for writing", null)
-        } catch (e: SecurityException) {
-            result.error("permission_denied", e.message, null)
-        } catch (e: Exception) {
-            result.error("write_failed", e.message, null)
+        ioExecutor.execute {
+            val outcome: IoOutcome = try {
+                val uri = Uri.parse(uriString)
+                // "wt" truncates the file before writing so shortened content
+                // does not leave stale bytes at the tail.
+                val stream = contentResolver.openOutputStream(uri, "wt")
+                if (stream == null) {
+                    IoOutcome.Error("not_found", "Could not open document for writing")
+                } else {
+                    stream.use { output ->
+                        output.write(content.toByteArray(Charsets.UTF_8))
+                        output.flush()
+                    }
+                    IoOutcome.Success(null)
+                }
+            } catch (e: SecurityException) {
+                IoOutcome.Error("permission_denied", e.message)
+            } catch (e: Exception) {
+                IoOutcome.Error("write_failed", e.message)
+            }
+            post { outcome.deliverTo(result) }
         }
+    }
+
+    private fun post(block: () -> Unit) {
+        mainHandler.post { block() }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -198,6 +239,19 @@ class MainActivity : FlutterActivity() {
             null
         } finally {
             cursor?.close()
+        }
+    }
+
+    /** Sum type for the result of a background SAF operation. */
+    private sealed class IoOutcome {
+        data class Success(val value: Any?) : IoOutcome()
+        data class Error(val code: String, val message: String?) : IoOutcome()
+
+        fun deliverTo(result: MethodChannel.Result) {
+            when (this) {
+                is Success -> result.success(value)
+                is Error -> result.error(code, message, null)
+            }
         }
     }
 

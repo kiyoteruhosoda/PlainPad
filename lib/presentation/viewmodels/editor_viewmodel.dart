@@ -37,6 +37,12 @@ class EditorViewModel extends ChangeNotifier {
   bool get hasDocument => _document != null;
   bool get dirty => _editing && _document != null && _draft != _document!.content;
 
+  /// Live in-progress text while in edit mode. Survives widget rebuilds
+  /// (e.g. switching tabs and returning) because the ViewModel is a
+  /// singleton — the editor widget reseeds from this, not from the last
+  /// saved [document.content], to keep UI and saved state in sync.
+  String get draft => _editing ? _draft : (_document?.content ?? '');
+
   /// Consumes and returns the latest error message.
   ///
   /// Returns null on subsequent reads until another error occurs — this lets

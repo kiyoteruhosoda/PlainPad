@@ -120,7 +120,10 @@ class _EditorPageState extends State<EditorPage> {
     if (vm.editing) {
       return LineNumberedTextEditor(
         key: ValueKey('edit:${vm.document!.uri.value}'),
-        initialText: vm.document!.content,
+        // Seed from the live draft, not the last-saved content. The page can
+        // be rebuilt while editing (tab switch, theme change) while the
+        // singleton ViewModel keeps the user's in-progress text.
+        initialText: vm.draft,
         autofocus: true,
         onChanged: vm.updateDraft,
       );
