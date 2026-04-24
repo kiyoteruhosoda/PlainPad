@@ -22,10 +22,6 @@ class AppConfig {
   /// Short tagline rendered under the app name in the drawer.
   static const String appTagline = 'DADS Design System';
 
-  // ─── Home page copy ───────────────────────────────────────────────
-  static const String homeSubtitle = 'DADS Design System App';
-  static const String homeCardTitle = 'DADS Design System';
-
   // ─── Typography ───────────────────────────────────────────────────
   /// Must exactly match the `family:` entry in `pubspec.yaml`'s fonts
   /// section. Both values are the contract between Flutter's font loader

@@ -5,18 +5,24 @@ import 'package:plainpad/application/usecases/app_info/get_app_info_usecase.dart
 import 'package:plainpad/application/usecases/debug/get_debug_settings_usecase.dart';
 import 'package:plainpad/application/usecases/debug/set_debug_mode_usecase.dart';
 import 'package:plainpad/application/usecases/debug/set_log_level_usecase.dart';
+import 'package:plainpad/application/usecases/editor/create_document_usecase.dart';
+import 'package:plainpad/application/usecases/editor/open_document_usecase.dart';
+import 'package:plainpad/application/usecases/editor/save_document_usecase.dart';
 import 'package:plainpad/application/usecases/theme/get_theme_preference_usecase.dart';
 import 'package:plainpad/application/usecases/theme/set_theme_preference_usecase.dart';
 import 'package:plainpad/domain/repositories/app_info_repository.dart';
 import 'package:plainpad/domain/repositories/debug_settings_repository.dart';
+import 'package:plainpad/domain/repositories/text_document_repository.dart';
 import 'package:plainpad/domain/repositories/theme_preference_repository.dart';
 import 'package:plainpad/infrastructure/logging/persistent_app_logger.dart';
 import 'package:plainpad/infrastructure/repositories/package_info_app_info_repository.dart';
+import 'package:plainpad/infrastructure/repositories/saf_text_document_repository.dart';
 import 'package:plainpad/infrastructure/repositories/shared_preferences_debug_settings_repository.dart';
 import 'package:plainpad/infrastructure/repositories/shared_preferences_theme_preference_repository.dart';
 import 'package:plainpad/presentation/viewmodels/about_viewmodel.dart';
 import 'package:plainpad/presentation/viewmodels/debug_settings_viewmodel.dart';
 import 'package:plainpad/presentation/viewmodels/debug_viewmodel.dart';
+import 'package:plainpad/presentation/viewmodels/editor_viewmodel.dart';
 import 'package:plainpad/presentation/viewmodels/theme_viewmodel.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
 
@@ -52,6 +58,10 @@ Future<void> setupServiceLocator() async {
     const PackageInfoAppInfoRepository(),
   );
 
+  sl.registerSingleton<TextDocumentRepository>(
+    SafTextDocumentRepository(),
+  );
+
   // ─── Use cases ───────────────────────────────────────────────────────
 
   sl.registerFactory<GetThemePreferenceUseCase>(
@@ -71,6 +81,15 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerFactory<SetLogLevelUseCase>(
     () => SetLogLevelUseCase(sl<DebugSettingsRepository>(), sl<AppLogger>()),
+  );
+  sl.registerFactory<OpenDocumentUseCase>(
+    () => OpenDocumentUseCase(sl<TextDocumentRepository>()),
+  );
+  sl.registerFactory<CreateDocumentUseCase>(
+    () => CreateDocumentUseCase(sl<TextDocumentRepository>()),
+  );
+  sl.registerFactory<SaveDocumentUseCase>(
+    () => SaveDocumentUseCase(sl<TextDocumentRepository>()),
   );
 
   // ─── ViewModels ──────────────────────────────────────────────────────
@@ -93,6 +112,14 @@ Future<void> setupServiceLocator() async {
   );
   sl.registerFactory<DebugViewModel>(
     () => DebugViewModel(sl<GetAppInfoUseCase>(), sl<AppLogger>()),
+  );
+  sl.registerSingleton<EditorViewModel>(
+    EditorViewModel(
+      sl<OpenDocumentUseCase>(),
+      sl<CreateDocumentUseCase>(),
+      sl<SaveDocumentUseCase>(),
+      sl<AppLogger>(),
+    ),
   );
 
   // ─── Infrastructure (DB, Repositories) ──────────────────────────────

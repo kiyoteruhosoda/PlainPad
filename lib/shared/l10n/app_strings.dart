@@ -7,8 +7,7 @@ class AppStrings {
   AppStrings._();
 
   // ─── Navigation ───────────────────────────────────────────────────────
-  static const String navHome = 'Home';
-  static const String navSearch = 'Search';
+  static const String navHome = 'Editor';
   static const String navSettings = 'Settings';
 
   // ─── Drawer ───────────────────────────────────────────────────────────
@@ -17,25 +16,6 @@ class AppStrings {
   static const String drawerLicenses = 'Licenses';
   static const String drawerDebug = 'Debug Info';
   static const String drawerLogs = 'Logs';
-
-  // ─── Home tab ─────────────────────────────────────────────────────────
-  static const String homeWelcomeTitle = 'Welcome';
-  static const String homeCardBody =
-      'This app is built following the Digital Agency Design System (DADS). '
-      'It provides a consistent UI based on color tokens, typography, and spacing.';
-  static const String homeComponentsTitle = 'Components';
-  static const String homePrimaryButton = 'Primary Button';
-  static const String homeSecondaryButton = 'Secondary Button';
-  static const String homeTextFieldLabel = 'Text Input';
-  static const String homeTextFieldHint = 'Enter text here';
-  static const String homeListCardTitle = 'List Card';
-  static const String homeListCardSubtitle = 'Subtitle text';
-  static const String homeListCardItem2 = 'Item 2';
-
-  // ─── Search tab ───────────────────────────────────────────────────────
-  static const String searchFieldLabel = 'Search';
-  static const String searchFieldHint = 'Enter keyword';
-  static const String searchEmptyMessage = 'Enter a keyword to search';
 
   // ─── Settings tab ─────────────────────────────────────────────────────
   static const String settingsTitle = 'Settings';
@@ -137,10 +117,28 @@ class AppStrings {
   static const String licensesDetails =
       'Please refer to the package license file for details.';
 
+  // ─── Editor ───────────────────────────────────────────────────────────
+  static const String editorTitle = 'Editor';
+  static const String editorEmptyMessage =
+      'Open or create a text file to get started';
+  static const String editorNoDocument = 'No document';
+  static const String editorStatusViewing = 'Viewer mode';
+  static const String editorStatusEditing = 'Editing';
+  static const String editorStatusEditingDirty = 'Editing · unsaved changes';
+  static const String editorOpenTooltip = 'Open file';
+  static const String editorNewTooltip = 'New file';
+  static const String editorEditTooltip = 'Edit';
+  static const String editorCancelTooltip = 'Cancel editing';
+  static const String editorSave = 'Save';
+  static const String editorDiscardTitle = 'Discard changes?';
+  static const String editorDiscardBody =
+      'Your unsaved edits will be lost. Continue?';
+  static const String editorKeepEditing = 'Keep editing';
+  static const String editorDiscard = 'Discard';
+
   // ─── Common ──────────────────────────────────────────────────────────
   static const String commonRetry = 'Retry';
   static const String commonMenu = 'Menu';
-  static const String commonNotifications = 'Notifications';
   static const String commonNotFound = '404 - Page not found';
   static const String commonPageNotFound = 'Page Not Found';
   static const String commonLoading = 'Loading...';
