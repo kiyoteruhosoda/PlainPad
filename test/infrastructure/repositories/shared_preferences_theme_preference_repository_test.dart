@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flutterbase/infrastructure/repositories/shared_preferences_theme_preference_repository.dart';
-import 'package:flutterbase/shared/value_objects/app_theme_mode.dart';
+import 'package:plainpad/infrastructure/repositories/shared_preferences_theme_preference_repository.dart';
+import 'package:plainpad/shared/value_objects/app_theme_mode.dart';
 
 void main() {
   late SharedPreferences prefs;

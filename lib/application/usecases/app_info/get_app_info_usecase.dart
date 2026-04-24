@@ -1,5 +1,5 @@
-import 'package:flutterbase/application/dto/app_info_dto.dart';
-import 'package:flutterbase/domain/repositories/app_info_repository.dart';
+import 'package:plainpad/application/dto/app_info_dto.dart';
+import 'package:plainpad/domain/repositories/app_info_repository.dart';
 
 /// Returns the application's version and build metadata.
 final class GetAppInfoUseCase {

@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutterbase/app/di/service_locator.dart';
-import 'package:flutterbase/application/usecases/debug/get_debug_settings_usecase.dart';
-import 'package:flutterbase/application/usecases/debug/set_debug_mode_usecase.dart';
-import 'package:flutterbase/application/usecases/debug/set_log_level_usecase.dart';
-import 'package:flutterbase/shared/logging/app_logger.dart';
-import 'package:flutterbase/shared/logging/log_level.dart';
+import 'package:plainpad/app/di/service_locator.dart';
+import 'package:plainpad/application/usecases/debug/get_debug_settings_usecase.dart';
+import 'package:plainpad/application/usecases/debug/set_debug_mode_usecase.dart';
+import 'package:plainpad/application/usecases/debug/set_log_level_usecase.dart';
+import 'package:plainpad/shared/logging/app_logger.dart';
+import 'package:plainpad/shared/logging/log_level.dart';
 
 /// Manages debug mode and log-level preferences.
 ///

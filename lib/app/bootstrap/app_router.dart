@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/app/di/service_locator.dart';
-import 'package:flutterbase/presentation/pages/main_page.dart';
-import 'package:flutterbase/presentation/pages/system/about_page.dart';
-import 'package:flutterbase/presentation/pages/system/debug_page.dart';
-import 'package:flutterbase/presentation/pages/system/logs_page.dart';
-import 'package:flutterbase/shared/l10n/app_strings.dart';
-import 'package:flutterbase/shared/logging/app_logger.dart';
+import 'package:plainpad/app/di/service_locator.dart';
+import 'package:plainpad/presentation/pages/main_page.dart';
+import 'package:plainpad/presentation/pages/system/about_page.dart';
+import 'package:plainpad/presentation/pages/system/debug_page.dart';
+import 'package:plainpad/presentation/pages/system/logs_page.dart';
+import 'package:plainpad/shared/l10n/app_strings.dart';
+import 'package:plainpad/shared/logging/app_logger.dart';
 
 /// Named route definitions.
 class AppRouter {

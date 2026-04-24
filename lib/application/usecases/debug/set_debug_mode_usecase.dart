@@ -1,4 +1,4 @@
-import 'package:flutterbase/domain/repositories/debug_settings_repository.dart';
+import 'package:plainpad/domain/repositories/debug_settings_repository.dart';
 
 /// Persists the debug-mode enabled flag.
 final class SetDebugModeUseCase {

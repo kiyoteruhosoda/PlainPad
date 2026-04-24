@@ -1,4 +1,4 @@
-package com.example.flutterbase
+package com.nolumia.plainpad
 
 import io.flutter.embedding.android.FlutterActivity
 

@@ -1,7 +1,7 @@
 import 'dart:io';
 
-import 'package:flutterbase/shared/logging/log_entry.dart';
-import 'package:flutterbase/shared/logging/log_level.dart';
+import 'package:plainpad/shared/logging/log_entry.dart';
+import 'package:plainpad/shared/logging/log_level.dart';
 
 export 'log_entry.dart';
 export 'log_level.dart';

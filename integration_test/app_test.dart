@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import 'package:flutterbase/app/bootstrap/app_widget.dart';
-import 'package:flutterbase/app/di/service_locator.dart';
+import 'package:plainpad/app/bootstrap/app_widget.dart';
+import 'package:plainpad/app/di/service_locator.dart';
 
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();

@@ -1,7 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterbase/application/dto/app_info_dto.dart';
-import 'package:flutterbase/application/usecases/app_info/get_app_info_usecase.dart';
-import 'package:flutterbase/domain/repositories/app_info_repository.dart';
+import 'package:plainpad/application/dto/app_info_dto.dart';
+import 'package:plainpad/application/usecases/app_info/get_app_info_usecase.dart';
+import 'package:plainpad/domain/repositories/app_info_repository.dart';
 
 // ─── Fake repository ──────────────────────────────────────────────────────────
 

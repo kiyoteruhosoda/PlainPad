@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutterbase/app/di/service_locator.dart';
-import 'package:flutterbase/presentation/viewmodels/about_viewmodel.dart';
-import 'package:flutterbase/presentation/viewmodels/debug_settings_viewmodel.dart';
-import 'package:flutterbase/presentation/widgets/ui/widgets.dart';
-import 'package:flutterbase/shared/config/app_config.dart';
-import 'package:flutterbase/shared/l10n/app_strings.dart';
-import 'package:flutterbase/shared/theme/theme.dart';
+import 'package:plainpad/app/di/service_locator.dart';
+import 'package:plainpad/presentation/viewmodels/about_viewmodel.dart';
+import 'package:plainpad/presentation/viewmodels/debug_settings_viewmodel.dart';
+import 'package:plainpad/presentation/widgets/ui/widgets.dart';
+import 'package:plainpad/shared/config/app_config.dart';
+import 'package:plainpad/shared/l10n/app_strings.dart';
+import 'package:plainpad/shared/theme/theme.dart';
 
 /// About / version information page.
 class AboutPage extends StatefulWidget {

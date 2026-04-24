@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutterbase/shared/theme/app_theme.dart';
-import 'package:flutterbase/shared/theme/app_colors.dart';
+import 'package:plainpad/shared/theme/app_theme.dart';
+import 'package:plainpad/shared/theme/app_colors.dart';
 
 /// Helpers to build widgets under a specific theme for testing.
 Widget _wrapWithTheme(Widget child, ThemeData theme) {
