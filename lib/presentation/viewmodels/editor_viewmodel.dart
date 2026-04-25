@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:plainpad/application/usecases/editor/create_document_usecase.dart';
 import 'package:plainpad/application/usecases/editor/open_document_usecase.dart';
@@ -18,12 +20,24 @@ class EditorViewModel extends ChangeNotifier {
     this._createDocument,
     this._saveDocument,
     this._logger,
-  );
+  ) {
+    _incomingDocsSub = _openDocument.incomingDocuments.listen(
+      _onIncomingDocument,
+      onError: (Object e) {
+        _errorMessage = e is AppError ? e.message : 'Failed to open document';
+        _logger.error('[Editor] incoming document error: $e');
+        notifyListeners();
+      },
+    );
+  }
 
   final OpenDocumentUseCase _openDocument;
   final CreateDocumentUseCase _createDocument;
   final SaveDocumentUseCase _saveDocument;
   final AppLogger _logger;
+
+  StreamSubscription<TextDocument>? _incomingDocsSub;
+  bool _initialDocumentChecked = false;
 
   TextDocument? _document;
   String _draft = '';
@@ -51,6 +65,23 @@ class EditorViewModel extends ChangeNotifier {
     final m = _errorMessage;
     _errorMessage = null;
     return m;
+  }
+
+  /// Opens the document that was delivered via a cold-start VIEW intent.
+  ///
+  /// No-ops if the app was not launched via a VIEW intent, or if already
+  /// called once. Safe to call from widget [initState].
+  Future<void> openInitialDocument() async {
+    if (_initialDocumentChecked || _busy) return;
+    _initialDocumentChecked = true;
+    await _runBusy(() async {
+      final doc = await _openDocument.getInitial();
+      if (doc == null) return;
+      _logger.info('[Editor] opened initial document ${doc.displayName}');
+      _document = doc;
+      _draft = doc.content;
+      _editing = false;
+    });
   }
 
   Future<void> openDocument() async {
@@ -115,6 +146,14 @@ class EditorViewModel extends ChangeNotifier {
     });
   }
 
+  void _onIncomingDocument(TextDocument doc) {
+    _logger.info('[Editor] received incoming document ${doc.displayName}');
+    _document = doc;
+    _draft = doc.content;
+    _editing = false;
+    notifyListeners();
+  }
+
   Future<bool> _runBusy(Future<void> Function() action) async {
     _busy = true;
     _errorMessage = null;
@@ -134,5 +173,11 @@ class EditorViewModel extends ChangeNotifier {
       _busy = false;
       notifyListeners();
     }
+  }
+
+  @override
+  void dispose() {
+    _incomingDocsSub?.cancel();
+    super.dispose();
   }
 }

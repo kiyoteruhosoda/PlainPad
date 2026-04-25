@@ -22,4 +22,14 @@ abstract interface class TextDocumentRepository {
     required DocumentUri uri,
     required String content,
   });
+
+  /// Returns the document passed via an external VIEW intent at cold start.
+  ///
+  /// Returns `null` when the app was not launched via a VIEW intent or the
+  /// initial intent has already been consumed.
+  Future<TextDocument?> getInitialDocument();
+
+  /// Emits a [TextDocument] whenever the app receives a VIEW intent while
+  /// already running (i.e. via [Activity.onNewIntent]).
+  Stream<TextDocument> get incomingDocuments;
 }

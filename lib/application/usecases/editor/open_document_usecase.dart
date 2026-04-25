@@ -10,4 +10,12 @@ final class OpenDocumentUseCase {
   final TextDocumentRepository _repository;
 
   Future<TextDocument?> execute() => _repository.pickAndRead();
+
+  /// Returns the document supplied via an external VIEW intent at cold start,
+  /// or `null` when the app was not launched that way.
+  Future<TextDocument?> getInitial() => _repository.getInitialDocument();
+
+  /// Emits a [TextDocument] each time the OS delivers a VIEW intent while
+  /// the app is already running.
+  Stream<TextDocument> get incomingDocuments => _repository.incomingDocuments;
 }
