@@ -89,32 +89,45 @@ class MainActivity : FlutterActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         this.intent = intent
-        if (intent.action == Intent.ACTION_VIEW) {
-            val uri = intent.data ?: return
-            grantReadPermission(uri)
-            val displayName = queryDisplayName(uri) ?: "untitled"
-            mainHandler.post {
-                flutterChannel?.invokeMethod(
-                    "openDocument",
-                    mapOf("uri" to uri.toString(), "displayName" to displayName),
-                )
-            }
+        val uri = extractUri(intent) ?: return
+        grantReadPermission(uri)
+        val displayName = queryDisplayName(uri) ?: "untitled"
+        mainHandler.post {
+            flutterChannel?.invokeMethod(
+                "openDocument",
+                mapOf("uri" to uri.toString(), "displayName" to displayName),
+            )
         }
     }
 
     private fun getInitialDocument(result: MethodChannel.Result) {
-        if (initialIntentConsumed || intent?.action != Intent.ACTION_VIEW) {
+        if (initialIntentConsumed) {
             result.success(null)
             return
         }
-        val uri = intent?.data ?: run {
-            result.success(null)
-            return
-        }
+        val currentIntent = intent ?: run { result.success(null); return }
+        val uri = extractUri(currentIntent) ?: run { result.success(null); return }
         initialIntentConsumed = true
         grantReadPermission(uri)
         val displayName = queryDisplayName(uri) ?: "untitled"
         result.success(mapOf("uri" to uri.toString(), "displayName" to displayName))
+    }
+
+    /**
+     * Extracts a document URI from [ACTION_VIEW] (intent.data) or
+     * [ACTION_SEND] (EXTRA_STREAM), returning null for other actions.
+     */
+    private fun extractUri(intent: Intent): Uri? = when (intent.action) {
+        Intent.ACTION_VIEW -> intent.data
+        Intent.ACTION_SEND -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+        }
+        else -> null
     }
 
     private fun grantReadPermission(uri: Uri) {

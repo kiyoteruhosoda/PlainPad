@@ -40,12 +40,19 @@ class EditorViewModel extends ChangeNotifier {
   bool _initialDocumentChecked = false;
 
   TextDocument? _document;
+  TextDocument? _pendingIncomingDocument;
   String _draft = '';
   bool _editing = false;
   bool _busy = false;
   String? _errorMessage;
 
   TextDocument? get document => _document;
+
+  /// Non-null when an external document arrived while the user had unsaved
+  /// edits. The View must prompt for confirmation and call either
+  /// [applyPendingIncomingDocument] or [discardPendingIncomingDocument].
+  TextDocument? get pendingIncomingDocument => _pendingIncomingDocument;
+
   bool get editing => _editing;
   bool get busy => _busy;
   bool get hasDocument => _document != null;
@@ -146,8 +153,31 @@ class EditorViewModel extends ChangeNotifier {
     });
   }
 
+  /// Applies the document queued by an external VIEW/SEND intent after the
+  /// user confirmed discarding their unsaved edits.
+  void applyPendingIncomingDocument() {
+    final doc = _pendingIncomingDocument;
+    _pendingIncomingDocument = null;
+    if (doc != null) _applyDocument(doc);
+  }
+
+  /// Drops the queued external document; the user chose to keep editing.
+  void discardPendingIncomingDocument() {
+    _pendingIncomingDocument = null;
+    notifyListeners();
+  }
+
   void _onIncomingDocument(TextDocument doc) {
     _logger.info('[Editor] received incoming document ${doc.displayName}');
+    if (dirty) {
+      _pendingIncomingDocument = doc;
+      notifyListeners();
+    } else {
+      _applyDocument(doc);
+    }
+  }
+
+  void _applyDocument(TextDocument doc) {
     _document = doc;
     _draft = doc.content;
     _editing = false;
