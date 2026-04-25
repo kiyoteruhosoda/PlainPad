@@ -32,6 +32,8 @@ import java.util.concurrent.Executors
 class MainActivity : FlutterActivity() {
 
     private var pendingResult: MethodChannel.Result? = null
+    private var flutterChannel: MethodChannel? = null
+    private var initialIntentConsumed = false
 
     /**
      * Single-threaded executor dedicated to SAF I/O. One file op at a time
@@ -42,12 +44,15 @@ class MainActivity : FlutterActivity() {
 
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
-        MethodChannel(
+        val channel = MethodChannel(
             flutterEngine.dartExecutor.binaryMessenger,
             CHANNEL,
-        ).setMethodCallHandler { call, result ->
+        )
+        flutterChannel = channel
+        channel.setMethodCallHandler { call, result ->
             when (call.method) {
                 "pickDocument" -> pickDocument(result)
+                "getInitialDocument" -> getInitialDocument(result)
                 "createDocument" -> {
                     val suggestedName = call.argument<String>("suggestedName") ?: "untitled.txt"
                     val mimeType = call.argument<String>("mimeType") ?: "text/plain"
@@ -77,7 +82,60 @@ class MainActivity : FlutterActivity() {
 
     override fun onDestroy() {
         ioExecutor.shutdown()
+        flutterChannel = null
         super.onDestroy()
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        this.intent = intent
+        val uri = extractUri(intent) ?: return
+        grantReadPermission(uri)
+        val displayName = queryDisplayName(uri) ?: "untitled"
+        mainHandler.post {
+            flutterChannel?.invokeMethod(
+                "openDocument",
+                mapOf("uri" to uri.toString(), "displayName" to displayName),
+            )
+        }
+    }
+
+    private fun getInitialDocument(result: MethodChannel.Result) {
+        if (initialIntentConsumed) {
+            result.success(null)
+            return
+        }
+        val currentIntent = intent ?: run { result.success(null); return }
+        val uri = extractUri(currentIntent) ?: run { result.success(null); return }
+        initialIntentConsumed = true
+        grantReadPermission(uri)
+        val displayName = queryDisplayName(uri) ?: "untitled"
+        result.success(mapOf("uri" to uri.toString(), "displayName" to displayName))
+    }
+
+    /**
+     * Extracts a document URI from [ACTION_VIEW] (intent.data) or
+     * [ACTION_SEND] (EXTRA_STREAM), returning null for other actions.
+     */
+    private fun extractUri(intent: Intent): Uri? = when (intent.action) {
+        Intent.ACTION_VIEW -> intent.data
+        Intent.ACTION_SEND -> {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                intent.getParcelableExtra(Intent.EXTRA_STREAM, Uri::class.java)
+            } else {
+                @Suppress("DEPRECATION")
+                intent.getParcelableExtra(Intent.EXTRA_STREAM)
+            }
+        }
+        else -> null
+    }
+
+    private fun grantReadPermission(uri: Uri) {
+        try {
+            contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        } catch (_: SecurityException) {
+            // Some providers don't support persistable permissions — ignore.
+        }
     }
 
     private fun pickDocument(result: MethodChannel.Result) {

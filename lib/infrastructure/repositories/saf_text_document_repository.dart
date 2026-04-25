@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/services.dart';
 import 'package:plainpad/domain/entities/text_document.dart';
 import 'package:plainpad/domain/repositories/text_document_repository.dart';
@@ -11,11 +13,36 @@ import 'package:plainpad/shared/errors/app_error.dart';
 /// strings with the native side.
 final class SafTextDocumentRepository implements TextDocumentRepository {
   SafTextDocumentRepository({MethodChannel? channel})
-      : _channel = channel ?? const MethodChannel(_channelName);
+      : _channel = channel ?? const MethodChannel(_channelName) {
+    _channel.setMethodCallHandler(_handleNativeCall);
+  }
 
   static const String _channelName = 'com.nolumia.plainpad/saf';
 
   final MethodChannel _channel;
+  final _incomingController = StreamController<TextDocument>.broadcast();
+
+  @override
+  Stream<TextDocument> get incomingDocuments => _incomingController.stream;
+
+  Future<dynamic> _handleNativeCall(MethodCall call) async {
+    if (call.method != 'openDocument') return;
+    final args = Map<String, dynamic>.from(call.arguments as Map);
+    final uri = args['uri'] as String?;
+    final displayName = args['displayName'] as String?;
+    if (uri == null) return;
+    try {
+      final docUri = DocumentUri(uri);
+      final content = await _readContent(docUri);
+      _incomingController.add(TextDocument(
+        uri: docUri,
+        displayName: displayName ?? 'untitled',
+        content: content,
+      ));
+    } catch (e) {
+      _incomingController.addError(e);
+    }
+  }
 
   @override
   Future<TextDocument?> pickAndRead() async {
@@ -55,6 +82,28 @@ final class SafTextDocumentRepository implements TextDocumentRepository {
       });
     } on PlatformException catch (e) {
       throw InfrastructureError('Failed to save document: ${e.message}',
+          cause: e);
+    }
+  }
+
+  @override
+  Future<TextDocument?> getInitialDocument() async {
+    try {
+      final raw =
+          await _channel.invokeMapMethod<String, dynamic>('getInitialDocument');
+      if (raw == null) return null;
+      final uri = raw['uri'] as String?;
+      final displayName = raw['displayName'] as String?;
+      if (uri == null) return null;
+      final docUri = DocumentUri(uri);
+      final content = await _readContent(docUri);
+      return TextDocument(
+        uri: docUri,
+        displayName: displayName ?? 'untitled',
+        content: content,
+      );
+    } on PlatformException catch (e) {
+      throw InfrastructureError('Failed to open initial document: ${e.message}',
           cause: e);
     }
   }

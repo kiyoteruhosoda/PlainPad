@@ -51,7 +51,7 @@ def appArchivesBase  = (project.findProperty("app.archivesBaseName")
 
 android {
     namespace = appNamespace
-    compileSdk = flutter.compileSdkVersion
+    compileSdk = 36
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
@@ -84,7 +84,7 @@ android {
     defaultConfig {
         applicationId = appApplicationId
         minSdk = flutter.minSdkVersion
-        targetSdk = flutter.targetSdkVersion
+        targetSdk = 36
         versionCode = flutterVersionCode.toInteger()
         versionName = flutterVersionName
     }

@@ -24,6 +24,7 @@ class _EditorPageState extends State<EditorPage> {
     super.initState();
     _vm = sl<EditorViewModel>();
     _vm.addListener(_onVmChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _vm.openInitialDocument());
   }
 
   @override
@@ -34,15 +35,44 @@ class _EditorPageState extends State<EditorPage> {
 
   void _onVmChanged() {
     final error = _vm.takeErrorMessage();
-    if (error == null) return;
-    // Defer to the next frame so we don't toggle ScaffoldMessenger state
-    // while the widget tree is still being built.
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context)
-        ..hideCurrentSnackBar()
-        ..showSnackBar(SnackBar(content: Text(error)));
-    });
+    if (error != null) {
+      // Defer to the next frame so we don't toggle ScaffoldMessenger state
+      // while the widget tree is still being built.
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context)
+          ..hideCurrentSnackBar()
+          ..showSnackBar(SnackBar(content: Text(error)));
+      });
+    }
+
+    if (_vm.pendingIncomingDocument != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        if (!mounted || _vm.pendingIncomingDocument == null) return;
+        final confirm = await showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text(AppStrings.editorDiscardTitle),
+            content: const Text(AppStrings.editorDiscardBody),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(false),
+                child: const Text(AppStrings.editorKeepEditing),
+              ),
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(true),
+                child: const Text(AppStrings.editorDiscard),
+              ),
+            ],
+          ),
+        );
+        if (confirm == true) {
+          _vm.applyPendingIncomingDocument();
+        } else {
+          _vm.discardPendingIncomingDocument();
+        }
+      });
+    }
   }
 
   Future<bool> _confirmDiscardIfDirty() async {
