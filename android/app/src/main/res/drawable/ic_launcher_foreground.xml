@@ -15,24 +15,24 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Paper body: white rounded rectangle, corner radius 6 -->
+    <!-- Paper body: white rounded rectangle, corner radius 5 -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M38,26 L70,26 Q76,26 76,32 L76,78 Q76,84 70,84 L38,84 Q32,84 32,78 L32,32 Q32,26 38,26 Z" />
+        android:pathData="M39,29 L69,29 Q74,29 74,34 L74,76 Q74,81 69,81 L39,81 Q34,81 34,76 L34,34 Q34,29 39,29 Z" />
 
     <!-- Ruled lines (full width) -->
     <path
         android:fillColor="#264AF4"
-        android:pathData="M38,40 L70,40 L70,44 L38,44 Z" />
+        android:pathData="M40,42 L68,42 L68,46 L40,46 Z" />
     <path
         android:fillColor="#264AF4"
-        android:pathData="M38,51 L70,51 L70,55 L38,55 Z" />
+        android:pathData="M40,52 L68,52 L68,56 L40,56 Z" />
     <path
         android:fillColor="#264AF4"
-        android:pathData="M38,62 L70,62 L70,66 L38,66 Z" />
+        android:pathData="M40,62 L68,62 L68,66 L40,66 Z" />
 
     <!-- Last ruled line (shorter, suggests end of content) -->
     <path
         android:fillColor="#264AF4"
-        android:pathData="M38,73 L57,73 L57,77 L38,77 Z" />
+        android:pathData="M40,72 L55,72 L55,76 L40,76 Z" />
 </vector>
