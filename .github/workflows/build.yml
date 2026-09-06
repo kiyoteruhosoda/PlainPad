@@ -103,9 +103,20 @@ jobs:
 
   build:
     needs: start-runner
+    # ⚠ This job runs on the ACI runner, which is on runner 2.317.0 — it only
+    #   understands `using:` docker / node12 / node16 / node20. Every action
+    #   here is therefore pinned to its last node20 major (v4). The @v5
+    #   majors declare `using: node24` and the runner refuses to load them,
+    #   failing "Set up job" before checkout — which is how every build since
+    #   2026-04-26 died, artifacts and all.
+    #   `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24` above does not help: it picks
+    #   which node a node20 action runs on, it does not teach an old runner a
+    #   `using:` it has never heard of.
+    #   Move these back to @v5 once the runner image ships 2.327 or newer.
+    #   The jobs on ubuntu-latest are GitHub-hosted and stay on @v5.
     runs-on: [self-hosted, flutter, android]
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@v4
         with:
           ref: ${{ github.event.workflow_run.head_branch || github.ref }}
           fetch-depth: 0  # Full history needed for git rev-list --count
@@ -147,7 +158,7 @@ jobs:
       # (see docs/CUSTOMISATION.md §9c).  We exclude the generic
       # app-release.{apk,aab} that Flutter CLI requires to stay put.
       - name: Upload APK
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: apk
           path: |
@@ -155,7 +166,7 @@ jobs:
             !build/app/outputs/flutter-apk/app-release.apk
           retention-days: 30
       - name: Upload AAB
-        uses: actions/upload-artifact@v5
+        uses: actions/upload-artifact@v4
         with:
           name: aab
           path: |
