@@ -2,8 +2,15 @@
 <!--
   Launcher icon foreground: notepad silhouette for the adaptive icon (API 26+).
 
-  Canvas is 108 × 108 dp; the central 72 × 72 dp (18–90 each axis) is the
-  safe zone guaranteed visible across all launcher masks.
+  Canvas is 108 × 108 dp. Only the central 72 × 72 dp (18–90 each axis)
+  survives every launcher mask, and a round mask cuts that square down to a
+  66 dp circle — so the artwork has to fit a circle of radius 33 around
+  (54, 54), not the 108 dp canvas it is drawn on.
+
+  The paper sits inside a radius of ~24: its far corner (68, 73) is 23.6
+  from the centre. It used to be 30.8, which cleared the mask on paper and
+  still came back clipped on a real launcher (2026-09-06) — the margin was
+  gone the moment a launcher applied any inset of its own.
 
   White rounded-rectangle = the paper body.
   Brand-blue (#264AF4) lines = ruled lines; the colour matches the background
@@ -15,24 +22,25 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Paper body: white rounded rectangle, corner radius 4 -->
+    <!-- Paper body: white rounded rectangle, corner radius 3.
+         40–68 × 35–73, centred on the canvas centre (54, 54). -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M40,32 L68,32 Q72,32 72,36 L72,75 Q72,79 68,79 L40,79 Q36,79 36,75 L36,36 Q36,32 40,32 Z" />
+        android:pathData="M43,35 L65,35 Q68,35 68,38 L68,70 Q68,73 65,73 L43,73 Q40,73 40,70 L40,38 Q40,35 43,35 Z" />
 
     <!-- Ruled lines (full width) -->
     <path
         android:fillColor="#264AF4"
-        android:pathData="M42,44 L66,44 L66,48 L42,48 Z" />
+        android:pathData="M45,45 L63,45 L63,48 L45,48 Z" />
     <path
         android:fillColor="#264AF4"
-        android:pathData="M42,53 L66,53 L66,57 L42,57 Z" />
+        android:pathData="M45,52 L63,52 L63,55 L45,55 Z" />
     <path
         android:fillColor="#264AF4"
-        android:pathData="M42,62 L66,62 L66,66 L42,66 Z" />
+        android:pathData="M45,59 L63,59 L63,62 L45,62 Z" />
 
     <!-- Last ruled line (shorter, suggests end of content) -->
     <path
         android:fillColor="#264AF4"
-        android:pathData="M42,71 L56,71 L56,75 L42,75 Z" />
+        android:pathData="M45,66 L56,66 L56,69 L45,69 Z" />
 </vector>
