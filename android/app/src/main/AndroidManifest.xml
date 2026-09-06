@@ -16,6 +16,17 @@
             <meta-data
               android:name="io.flutter.embedding.android.NormalTheme"
               android:resource="@style/NormalTheme" />
+            <!-- ⚠ Must stay false. When it is true (the Flutter default
+                 since 3.27), the launch intent's data URI becomes Flutter's
+                 initial route: opening a file from a file manager starts the
+                 app at `content://…/document/msf%3A1234`, which matches no
+                 screen, so the reader lands on the not-found page and never
+                 sees the document — even though MainActivity is holding it.
+                 This app has no URL routes; an incoming document arrives
+                 through the SAF channel (`getInitialDocument`) instead. -->
+            <meta-data
+              android:name="flutter_deeplinking_enabled"
+              android:value="false" />
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
                 <category android:name="android.intent.category.LAUNCHER"/>

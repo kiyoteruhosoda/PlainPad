@@ -50,6 +50,7 @@ class _AppWidgetState extends State<AppWidget> with WidgetsBindingObserver {
           darkTheme: AppTheme.dark,
           themeMode: themeViewModel.themeMode,
           onGenerateRoute: AppRouter.onGenerateRoute,
+          onGenerateInitialRoutes: AppRouter.onGenerateInitialRoutes,
           home: const MainPage(),
         );
       },
