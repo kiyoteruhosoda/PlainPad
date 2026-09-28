@@ -1,0 +1,89 @@
+name: Version Bump
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+    inputs:
+      bump_type:
+        description: "Version bump type"
+        required: true
+        default: auto
+        type: choice
+        options:
+          - auto
+          - major
+          - minor
+          - patch
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+permissions:
+  contents: write
+
+# 実行場所は nolumialab のセルフホストランナー（2026-09-28 に GitHub から forge へ移した）。
+jobs:
+  bump-version:
+    # ⚠ **自分の版上げで自分を起こさない。** 下の push は実在の利用者（actions-push）で
+    #   行うので、GITHUB_TOKEN と違って次の workflow を起こす。その 1 回はここで止める。
+    if: github.actor != 'actions-push'
+    # ⚠ **APK はまだどこでも焼いていない。** 旧 build.yml（Azure の使い捨てランナー）は
+    #   9 月から落ち続けていたので移さずに消した。配るときは deploy-repo の
+    #   resources/flutter-apps.json に 1 行足す ——forge の push の知らせが deck へ積み
+    #   （nolumiadeck ADR-0119。宛先 /api/release/hooks/push/app/<name> はホストの係
+    #   nolumia-forge-links が張る）、ここは今のまま版を上げて書き戻すだけでよい。
+    # ここは版を上げて書き戻すだけなので、docker も資格情報も要らない軽い台で走る。
+    # 版上げの commit は [skip ci] 付きでも知らせは届く（skip は workflow にだけ効く）。
+    runs-on: [self-hosted, nolumialab]
+    # ⚠ **ジョブのイメージに node が要る。** `uses:` の JS アクションは
+    #   ジョブのコンテナの中の node を呼ぶ。
+    container:
+      image: hub.nolumia.com:5000/builder/ci-python311@sha256:c6db7656b1a48195fde17e0c25c2f9e2d01dae78f09df73a74dcb1a24da53b45
+    # ⚠ 既定は 6 時間。ぶら下がったジョブが台を食い潰すので上限を置く。
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          # ⚠ **GITHUB_TOKEN では保護された main へ push できない。** forge の
+          #   pre-receive が Actions の仮の利用者（uid -2）を引けずに 500 を返す
+          #   （上流の未解決の不具合 forgejo/forgejo#11159）。実在の利用者
+          #   actions-push のトークン（kyon の Actions の秘密）で checkout して押す。
+          token: ${{ secrets.PUSH_TOKEN }}
+
+      - name: Configure git
+        run: |
+          git config user.name "forge-actions[bot]"
+          git config user.email "forge-actions[bot]@nolumia.com"
+
+      - name: Resolve bump type
+        id: bump-type
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "value=${{ inputs.bump_type }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "value=auto" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump version
+        id: bump
+        run: bash scripts/bump_version.sh "${{ steps.bump-type.outputs.value }}"
+
+      - name: Create version tag
+        if: steps.bump.outputs.new_version != ''
+        run: |
+          VERSION="v${{ steps.bump.outputs.new_version }}"
+          git add pubspec.yaml
+          # ⚠ **`[skip ci]` を外さない。** actions-push の push は GITHUB_TOKEN と違って
+          #   workflow を起こす。起きると forge は同じ枝の古い run（＝この run）を打ち切り、
+          #   後ろの段が走らないまま終わる（2026-09-27 に実測）。
+          git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version_full }} [skip ci]"
+          if git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1; then
+            echo "Tag $VERSION already exists, skipping tag creation."
+            git push origin main
+          else
+            git tag "$VERSION"
+            git push origin main --tags
+          fi
