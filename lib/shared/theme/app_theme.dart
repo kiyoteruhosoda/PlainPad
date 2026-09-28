@@ -289,8 +289,8 @@ class AppTheme {
     );
   }
 
-  static CardTheme _buildCardTheme({required bool isDark}) {
-    return CardTheme(
+  static CardThemeData _buildCardTheme({required bool isDark}) {
+    return CardThemeData(
       elevation: 0,
       color: isDark ? AppColors.darkBgLayer1 : AppColors.bgBase,
       shape: RoundedRectangleBorder(

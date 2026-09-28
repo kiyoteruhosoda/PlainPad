@@ -29,11 +29,9 @@ jobs:
     # ⚠ **自分の版上げで自分を起こさない。** 下の push は実在の利用者（actions-push）で
     #   行うので、GITHUB_TOKEN と違って次の workflow を起こす。その 1 回はここで止める。
     if: github.actor != 'actions-push'
-    # ⚠ **APK はまだどこでも焼いていない。** 旧 build.yml（Azure の使い捨てランナー）は
-    #   9 月から落ち続けていたので移さずに消した。配るときは deploy-repo の
-    #   resources/flutter-apps.json に 1 行足す ——forge の push の知らせが deck へ積み
-    #   （nolumiadeck ADR-0119。宛先 /api/release/hooks/push/app/<name> はホストの係
-    #   nolumia-forge-links が張る）、ここは今のまま版を上げて書き戻すだけでよい。
+    # リリースは forge の push の知らせが deck へ積む（nolumiadeck ADR-0119。
+    # 宛先 /api/release/hooks/push/app/plainpad はホストの係 nolumia-forge-links が張る）。
+    # 配ってよいことは deploy-repo の resources/flutter-apps.json が決める。
     # ここは版を上げて書き戻すだけなので、docker も資格情報も要らない軽い台で走る。
     # 版上げの commit は [skip ci] 付きでも知らせは届く（skip は workflow にだけ効く）。
     runs-on: [self-hosted, nolumialab]
