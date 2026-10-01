@@ -138,6 +138,18 @@ project.afterEvaluate {
         def variantCap    = variantName.capitalize()        // e.g. "Release"
         def perAppBase    = "${appArchivesBase}-${variant.versionName}-${variantName}"
 
+        // Per-output APK name.  `flutter build apk --split-per-abi` makes one
+        // variant emit one APK per ABI, and every one of them comes through
+        // the same loop below: without the ABI in the name all of them write
+        // the same file and the last writer wins, so the release would ship
+        // whichever ABI Gradle happened to emit last.  A build without splits
+        // has no ABI filter and keeps the old name.
+        def perAppApkName = { output ->
+            def abi = output.getFilter("ABI")
+            abi ? "${appArchivesBase}-${variant.versionName}-${abi}-${variantName}.apk"
+                : "${perAppBase}.apk"
+        }
+
         // APK copy — runs after the assemble task has produced app-<type>.apk.
         def assembleTask = tasks.findByName("assemble${variantCap}")
         if (assembleTask != null) {
@@ -146,13 +158,16 @@ project.afterEvaluate {
                     def src = output.outputFile
                     if (src?.exists()) {
                         // 1. Next to the AGP output.
-                        new File(src.parentFile, "${perAppBase}.apk").bytes = src.bytes
+                        def dstName = perAppApkName(output)
+                        new File(src.parentFile, dstName).bytes = src.bytes
 
                         // 署名なしモードでは AGP の出力が app-<type>-unsigned.apk になる。
                         // Flutter の CLI は app-<type>.apk を決め打ちで探すので、
                         // 既定名のコピーも置く（中身は unsigned）。
                         if (src.name.endsWith("-unsigned.apk")) {
-                            new File(src.parentFile, "app-${variantName}.apk").bytes = src.bytes
+                            // --split-per-abi では app-<abi>-<type>.apk を ABI ごとに 1 本ずつ置く。
+                            def flutterName = src.name.replace("-unsigned.apk", ".apk")
+                            new File(src.parentFile, flutterName).bytes = src.bytes
                         }
 
                         // 2. Next to Flutter's post-build copy.  Flutter
@@ -161,7 +176,7 @@ project.afterEvaluate {
                         //    into the same dir doesn't disturb our file.
                         def flutterApkDir = file("${buildDir}/outputs/flutter-apk")
                         flutterApkDir.mkdirs()
-                        def flutterDst = new File(flutterApkDir, "${perAppBase}.apk")
+                        def flutterDst = new File(flutterApkDir, dstName)
                         flutterDst.bytes = src.bytes
                         logger.lifecycle("Per-app APK: ${flutterDst}")
                     }
