@@ -28,7 +28,7 @@ dependencies:
   logger: ^2.4.0
 
   # Package info
-  package_info_plus: ^8.0.0
+  package_info_plus: ^10.2.2
   path: ^1.9.0
 
   # Log files directory

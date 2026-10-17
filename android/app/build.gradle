@@ -1,6 +1,9 @@
+// No `kotlin-android` here (task #453): the Flutter Gradle Plugin applies
+// Kotlin itself while `android.builtInKotlin=false`, and applying it from the
+// app is what Flutter warns will stop building. Same shape as Flutter 3.47's
+// own app template.
 plugins {
     id "com.android.application"
-    id "kotlin-android"
     id "dev.flutter.flutter-gradle-plugin"
 }
 
@@ -67,10 +70,6 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17
     }
 
     signingConfigs {
@@ -197,6 +196,12 @@ project.afterEvaluate {
                 }
             }
         }
+    }
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17
     }
 }
 
