@@ -75,27 +75,7 @@ class _EditorPageState extends State<EditorPage> {
     }
   }
 
-  Future<bool> _confirmDiscardIfDirty() async {
-    if (!_vm.dirty) return true;
-    final confirm = await showDialog<bool>(
-      context: context,
-      builder: (ctx) => AlertDialog(
-        title: const Text(AppStrings.editorDiscardTitle),
-        content: const Text(AppStrings.editorDiscardBody),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(false),
-            child: const Text(AppStrings.editorKeepEditing),
-          ),
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(true),
-            child: const Text(AppStrings.editorDiscard),
-          ),
-        ],
-      ),
-    );
-    return confirm ?? false;
-  }
+  Future<bool> _confirmDiscardIfDirty() => confirmDiscardIfDirty(context, _vm);
 
   Future<void> _handleOpen() async {
     if (!await _confirmDiscardIfDirty()) return;
@@ -163,6 +143,34 @@ class _EditorPageState extends State<EditorPage> {
       text: vm.document!.content,
     );
   }
+}
+
+/// Asks before throwing away unsaved edits. Resolves to `true` straight away
+/// when there is nothing to lose, so callers can always await it before a
+/// destructive step (leaving edit mode, opening or creating another file).
+Future<bool> confirmDiscardIfDirty(
+  BuildContext context,
+  EditorViewModel vm,
+) async {
+  if (!vm.dirty) return true;
+  final confirm = await showDialog<bool>(
+    context: context,
+    builder: (ctx) => AlertDialog(
+      title: const Text(AppStrings.editorDiscardTitle),
+      content: const Text(AppStrings.editorDiscardBody),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(false),
+          child: const Text(AppStrings.editorKeepEditing),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(ctx).pop(true),
+          child: const Text(AppStrings.editorDiscard),
+        ),
+      ],
+    ),
+  );
+  return confirm ?? false;
 }
 
 class _EditorToolbar extends StatelessWidget {
@@ -247,7 +255,13 @@ class EditorFloatingActions extends StatelessWidget {
               FloatingActionButton.small(
                 heroTag: 'editor-cancel',
                 tooltip: AppStrings.editorCancelTooltip,
-                onPressed: vm.busy ? null : vm.cancelEdit,
+                onPressed: vm.busy
+                    ? null
+                    : () async {
+                        if (await confirmDiscardIfDirty(context, vm)) {
+                          vm.cancelEdit();
+                        }
+                      },
                 child: const Icon(Icons.close),
               ),
               const SizedBox(height: AppSpacing.sm),
