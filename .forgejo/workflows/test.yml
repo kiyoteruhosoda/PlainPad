@@ -58,3 +58,36 @@ jobs:
           path: build/screenshots/
           retention-days: 14
           if-no-files-found: ignore
+
+  # Android のビルドが通り、Flutter の「Kotlin Gradle Plugin を当てていると
+  # 将来ビルドできなくなる」警告が出ないこと（task #453）。警告はアプリ自身の
+  # build.gradle と、KGP を当てる部品の両方で出る。配る段（deck）と同じ台で
+  # debug の APK を作り、記録に警告があれば落とす。
+  android-build:
+    runs-on: [self-hosted, nolumialab]
+    timeout-minutes: 40
+    container:
+      image: hub.nolumia.com:5000/builder/ci-flutter@sha256:996f813d0ef208155bc5e967838a0009fa6ade015b7b0441d1d124c3e540de0e
+      options: >-
+        -v flutter-pub-cache:/cache/pub
+        -v flutter-gradle-cache-plainpad-ci:/cache/gradle
+    env:
+      PUB_CACHE: /cache/pub
+      GRADLE_USER_HOME: /cache/gradle
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: pub get
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build a debug APK
+        run: |
+          set -o pipefail
+          flutter build apk --debug 2>&1 | tee build.log
+
+      - name: No Kotlin Gradle Plugin warning
+        run: |
+          if grep -n "Kotlin Gradle Plugin" build.log; then
+            echo "::error::Flutter warns about the Kotlin Gradle Plugin (task #453)"
+            exit 1
+          fi
