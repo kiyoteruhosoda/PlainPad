@@ -17,10 +17,10 @@ class AppConfig {
 
   /// One-line description shown on the About page.
   static const String appDescription =
-      'Flutter base app following the DADS design system';
+      'A simple viewer and editor for plain text files';
 
   /// Short tagline rendered under the app name in the drawer.
-  static const String appTagline = 'DADS Design System';
+  static const String appTagline = 'Plain text viewer & editor';
 
   // ─── Typography ───────────────────────────────────────────────────
   /// Must exactly match the `family:` entry in `pubspec.yaml`'s fonts

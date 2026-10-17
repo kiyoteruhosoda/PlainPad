@@ -10,7 +10,8 @@ import 'package:plainpad/shared/logging/log_level.dart';
 ///
 /// Debug mode controls the visibility of developer-only menu items (Logs,
 /// Debug Info). Log level controls the minimum severity recorded by
-/// [AppLogger]. Both defaults are intentionally developer-friendly (on / debug).
+/// [AppLogger]. Both default to developer-friendly values (on / debug) only in
+/// debug builds; release builds start with debug off and log level info.
 class DebugSettingsViewModel extends ChangeNotifier {
   DebugSettingsViewModel(
     this._getSettings,

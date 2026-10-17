@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:plainpad/app/bootstrap/app_router.dart';
 import 'package:plainpad/app/di/service_locator.dart';
-import 'package:plainpad/presentation/pages/main_page.dart';
 import 'package:plainpad/presentation/viewmodels/theme_viewmodel.dart';
 import 'package:plainpad/shared/config/app_config.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
@@ -50,8 +49,10 @@ class _AppWidgetState extends State<AppWidget> with WidgetsBindingObserver {
           darkTheme: AppTheme.dark,
           themeMode: themeViewModel.themeMode,
           onGenerateRoute: AppRouter.onGenerateRoute,
+          // The first screen comes from onGenerateInitialRoutes (MainPage).
+          // Do not add `home:` as well: MaterialApp asserts that only one of
+          // them is given, so a debug build would stop on a red screen.
           onGenerateInitialRoutes: AppRouter.onGenerateInitialRoutes,
-          home: const MainPage(),
         );
       },
     );

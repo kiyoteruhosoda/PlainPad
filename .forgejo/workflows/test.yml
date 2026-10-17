@@ -1,0 +1,44 @@
+name: Test
+
+# 変更の申請（PR）と main への push で `flutter test` を流す（task #408・#410）。
+# 読むだけの検査で、版上げ・配布はしない（それは version_bump.yml と deck）。
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: test-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: [self-hosted, nolumialab]
+    timeout-minutes: 30
+    # ⚠ リリースと同じビルダーを digest で継いだ台（wbstimer・foodexpiryapp と同じ）。
+    #   タグではなく digest で固定する。上げるときは他のアプリと揃える。
+    # ⚠ キャッシュは `actions/cache` ではなく名前付きボリューム（台の
+    #   `valid_volumes` が `flutter-pub-cache` を許している）。
+    container:
+      image: hub.nolumia.com:5000/builder/ci-flutter@sha256:996f813d0ef208155bc5e967838a0009fa6ade015b7b0441d1d124c3e540de0e
+      options: >-
+        -v flutter-pub-cache:/cache/pub
+    env:
+      PUB_CACHE: /cache/pub
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Flutter toolchain
+        run: flutter --version
+
+      - name: pub get
+        run: flutter pub get --enforce-lockfile
+
+      - name: Tests
+        run: flutter test

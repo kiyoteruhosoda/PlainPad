@@ -8,6 +8,9 @@ import 'package:plainpad/shared/logging/log_level.dart';
 PersistentAppLogger _fresh() {
   final logger = PersistentAppLogger();
   logger.clearBuffer(); // defensive clear
+  // The logger drops anything below debug by default; these tests check that
+  // every level is stored, so let all of them through.
+  logger.setMinLevel(LogLevel.verbose);
   return logger;
 }
 
