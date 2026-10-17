@@ -56,7 +56,8 @@ class EditorViewModel extends ChangeNotifier {
   bool get editing => _editing;
   bool get busy => _busy;
   bool get hasDocument => _document != null;
-  bool get dirty => _editing && _document != null && _draft != _document!.content;
+  bool get dirty =>
+      _editing && _document != null && _draft != _document!.content;
 
   /// Live in-progress text while in edit mode. Survives widget rebuilds
   /// (e.g. switching tabs and returning) because the ViewModel is a

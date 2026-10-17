@@ -24,7 +24,8 @@ class _EditorPageState extends State<EditorPage> {
     super.initState();
     _vm = sl<EditorViewModel>();
     _vm.addListener(_onVmChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _vm.openInitialDocument());
+    WidgetsBinding.instance
+        .addPostFrameCallback((_) => _vm.openInitialDocument());
   }
 
   @override

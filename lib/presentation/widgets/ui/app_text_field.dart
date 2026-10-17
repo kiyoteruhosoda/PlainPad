@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:plainpad/shared/theme/theme.dart';
 
 /// DADS-compliant text field.
 class AppTextField extends StatelessWidget {

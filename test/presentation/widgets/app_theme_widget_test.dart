@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:plainpad/shared/theme/app_theme.dart';
 import 'package:plainpad/shared/theme/app_colors.dart';
+import 'package:plainpad/shared/theme/app_theme.dart';
 
 /// Helpers to build widgets under a specific theme for testing.
 Widget _wrapWithTheme(Widget child, ThemeData theme) {
@@ -91,7 +91,8 @@ void main() {
       );
       await tester.pump();
 
-      expect(AppTheme.dark.scaffoldBackgroundColor, equals(AppColors.darkBgBase));
+      expect(
+          AppTheme.dark.scaffoldBackgroundColor, equals(AppColors.darkBgBase));
     });
 
     testWidgets('AppBar respects theme colors', (tester) async {
@@ -149,7 +150,8 @@ void main() {
           MaterialApp(
             theme: theme,
             home: const Scaffold(
-              body: TextField(decoration: InputDecoration(hintText: 'Type here')),
+              body:
+                  TextField(decoration: InputDecoration(hintText: 'Type here')),
             ),
           ),
         );

@@ -3,7 +3,8 @@ import 'package:plainpad/application/dto/app_info_dto.dart';
 import 'package:plainpad/domain/repositories/app_info_repository.dart';
 import 'package:plainpad/shared/build_info.dart';
 
-/// Retrieves app version from [PackageInfo] and build metadata from [BuildInfo].
+/// Retrieves app version from [PackageInfo] and build metadata from
+/// [BuildInfo].
 final class PackageInfoAppInfoRepository implements AppInfoRepository {
   const PackageInfoAppInfoRepository();
 

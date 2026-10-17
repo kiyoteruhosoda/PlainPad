@@ -60,7 +60,8 @@ void main() {
       log.info('first');
       log.info('second');
       log.info('third');
-      expect(log.entries.map((e) => e.message), equals(['first', 'second', 'third']));
+      expect(log.entries.map((e) => e.message),
+          equals(['first', 'second', 'third']));
     });
 
     test('buffer is capped at maxBufferEntries', () {

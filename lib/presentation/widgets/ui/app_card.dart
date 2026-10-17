@@ -35,7 +35,8 @@ class AppCard extends StatelessWidget {
   }
 }
 
-/// List-style card item with leading icon, title, subtitle, and optional action.
+/// List-style card item with leading icon, title, subtitle, and optional
+/// action.
 class AppListCard extends StatelessWidget {
   const AppListCard({
     super.key,

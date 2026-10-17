@@ -134,11 +134,9 @@ class _DrawerItemTile extends StatelessWidget {
       title: Text(
         item.label,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: item.isSelected
-                  ? colorScheme.primary
-                  : colorScheme.onSurface,
-              fontWeight:
-                  item.isSelected ? FontWeight.w700 : FontWeight.w400,
+              color:
+                  item.isSelected ? colorScheme.primary : colorScheme.onSurface,
+              fontWeight: item.isSelected ? FontWeight.w700 : FontWeight.w400,
             ),
       ),
       selected: item.isSelected,

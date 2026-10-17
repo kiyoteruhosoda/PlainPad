@@ -3,7 +3,7 @@ import 'package:plainpad/application/dto/app_info_dto.dart';
 import 'package:plainpad/application/usecases/app_info/get_app_info_usecase.dart';
 import 'package:plainpad/domain/repositories/app_info_repository.dart';
 
-// ─── Fake repository ──────────────────────────────────────────────────────────
+// ─── Fake repository ─────────────────────────────────────────────────────────
 
 class _FakeAppInfoRepository implements AppInfoRepository {
   const _FakeAppInfoRepository(this._dto);
@@ -29,7 +29,7 @@ void main() {
 
   group('GetAppInfoUseCase', () {
     test('returns AppInfoDto from repository', () async {
-      final useCase = GetAppInfoUseCase(const _FakeAppInfoRepository(fakeDto));
+      const useCase = GetAppInfoUseCase(_FakeAppInfoRepository(fakeDto));
       final result = await useCase.execute();
       expect(result.version, equals('1.2.3'));
       expect(result.buildNumber, equals('42'));
@@ -42,7 +42,7 @@ void main() {
     test('propagates repository exceptions', () async {
       final repo = _ThrowingAppInfoRepository();
       final useCase = GetAppInfoUseCase(repo);
-      expect(() => useCase.execute(), throwsException);
+      expect(useCase.execute, throwsException);
     });
   });
 }

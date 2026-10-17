@@ -4,8 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:logger/logger.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
-import 'package:plainpad/shared/logging/log_entry.dart';
-import 'package:plainpad/shared/logging/log_level.dart';
 
 /// [AppLogger] implementation that writes to the console and to rotating
 /// log files under `<documents>/logs/`.
@@ -84,9 +82,8 @@ final class PersistentAppLogger implements AppLogger {
   List<LogEntry> get entries => List.unmodifiable(_buffer);
 
   @override
-  List<LogEntry> entriesForLevel(LogLevel? level) => level == null
-      ? entries
-      : entries.where((e) => e.level == level).toList();
+  List<LogEntry> entriesForLevel(LogLevel? level) =>
+      level == null ? entries : entries.where((e) => e.level == level).toList();
 
   @override
   void clearBuffer() => _buffer.clear();
@@ -212,7 +209,7 @@ final class PersistentAppLogger implements AppLogger {
   }
 }
 
-// ─── Logger internals ─────────────────────────────────────────────────────────
+// ─── Logger internals ────────────────────────────────────────────────────────
 
 class _PassThroughFilter extends LogFilter {
   @override
