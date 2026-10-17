@@ -1,8 +1,8 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plainpad/app/bootstrap/app_widget.dart';
 import 'package:plainpad/app/di/service_locator.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// The native Storage Access Framework bridge, as the app names it.
 const MethodChannel safChannel = MethodChannel('com.nolumia.plainpad/saf');

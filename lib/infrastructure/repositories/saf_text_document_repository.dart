@@ -113,8 +113,8 @@ final class SafTextDocumentRepository implements TextDocumentRepository {
     Map<String, Object?>? arguments,
   }) async {
     try {
-      final raw = await _channel
-          .invokeMapMethod<String, dynamic>(method, arguments);
+      final raw =
+          await _channel.invokeMapMethod<String, dynamic>(method, arguments);
       if (raw == null) return null;
       final uri = raw['uri'] as String?;
       final displayName = raw['displayName'] as String?;

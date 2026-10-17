@@ -8,55 +8,57 @@ environment:
   flutter: ">=3.16.0"
 
 dependencies:
+  # Equatable (value objects)
+  equatable: ^2.0.5
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
 
-  # Navigation
-  go_router: ^13.0.0
-
   # State management
   flutter_riverpod: ^2.5.1
-  riverpod_annotation: ^2.3.5
 
   # DI
   get_it: ^7.7.0
 
-  # SQLite
-  sqflite: ^2.3.3
-  path: ^1.9.0
+  # Navigation
+  go_router: ^13.0.0
+
+  # Logging
+  logger: ^2.4.0
 
   # Package info
   package_info_plus: ^8.0.0
+  path: ^1.9.0
 
-  # URL launcher (for licenses)
-  url_launcher: ^6.3.0
+  # Log files directory
+  path_provider: ^2.1.0
+  riverpod_annotation: ^2.3.5
 
   # Shared preferences
   shared_preferences: ^2.3.0
 
-  # Logging
-  logger: ^2.4.0
-  path_provider: ^2.1.0
+  # SQLite
+  sqflite: ^2.3.3
 
-  # Equatable (value objects)
-  equatable: ^2.0.5
+  # URL launcher (for licenses)
+  url_launcher: ^6.3.0
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
-  integration_test:
-    sdk: flutter
-  flutter_lints: ^4.0.0
   build_runner: ^2.4.11
-  riverpod_generator: ^2.4.3
-  mockito: ^5.4.4
-  sqflite_common_ffi: ^2.3.3
+
   # 0.13.x fails on Dart SDK ≥ 3.3 during adaptive-icon generation
   # (silently skips mipmap-anydpi-v26 output). 0.14+ also unlocks the
   # `adaptive_icon_monochrome` knob used for Android 13+ themed icons.
   flutter_launcher_icons: ^0.14.3
+  flutter_lints: ^4.0.0
+  flutter_test:
+    sdk: flutter
+  integration_test:
+    sdk: flutter
+  mockito: ^5.4.4
+  riverpod_generator: ^2.4.3
+  sqflite_common_ffi: ^2.3.3
 
 flutter:
   uses-material-design: true

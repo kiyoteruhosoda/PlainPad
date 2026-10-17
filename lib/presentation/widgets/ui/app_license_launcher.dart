@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:plainpad/presentation/widgets/ui/app_icon_mark.dart';
 import 'package:plainpad/shared/build_info.dart';
 import 'package:plainpad/shared/config/app_config.dart';
 import 'package:plainpad/shared/theme/theme.dart';
@@ -23,21 +24,9 @@ class _AppLicenseIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: AppSpacing.lg),
-      child: Container(
-        width: AppSpacing.aboutIconContainer,
-        height: AppSpacing.aboutIconContainer,
-        decoration: BoxDecoration(
-          color: AppColors.brandContainer,
-          borderRadius: AppRadius.xlBorder,
-        ),
-        child: const Icon(
-          Icons.web_asset,
-          size: AppSpacing.aboutIconSize,
-          color: AppColors.brand,
-        ),
-      ),
+    return const Padding(
+      padding: EdgeInsets.symmetric(vertical: AppSpacing.lg),
+      child: AppIconMark(),
     );
   }
 }

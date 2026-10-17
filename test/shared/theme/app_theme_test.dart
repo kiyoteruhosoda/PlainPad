@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:plainpad/shared/config/app_config.dart';
-import 'package:plainpad/shared/theme/app_theme.dart';
 import 'package:plainpad/shared/theme/app_colors.dart';
+import 'package:plainpad/shared/theme/app_theme.dart';
 
 void main() {
   group('AppTheme.light', () {

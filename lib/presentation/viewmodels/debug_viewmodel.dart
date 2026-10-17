@@ -36,9 +36,11 @@ class DebugViewModel extends ChangeNotifier {
       _state = DebugState.loaded;
       _logger.debug('[DebugViewModel] loadAppInfo success');
     } catch (e, st) {
-      _error = UnexpectedError('Failed to load debug info', cause: e, stackTrace: st);
+      _error = UnexpectedError('Failed to load debug info',
+          cause: e, stackTrace: st);
       _state = DebugState.error;
-      _logger.error('[DebugViewModel] loadAppInfo failed', error: e, stackTrace: st);
+      _logger.error('[DebugViewModel] loadAppInfo failed',
+          error: e, stackTrace: st);
     } finally {
       notifyListeners();
     }

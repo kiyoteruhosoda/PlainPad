@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:plainpad/presentation/widgets/ui/app_primary_button.dart';
 import 'package:plainpad/shared/l10n/app_strings.dart';
 import 'package:plainpad/shared/theme/theme.dart';
-import 'app_primary_button.dart';
 
 /// Loading state indicator.
 class AppLoadingView extends StatelessWidget {

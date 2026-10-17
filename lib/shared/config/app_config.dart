@@ -30,8 +30,7 @@ class AppConfig {
 
   // ─── Design system attribution (About + LicenseRegistry) ──────────
   static const String designSystemLabel = 'DADS v2.10.3';
-  static const String designSystemName =
-      'Digital Agency Design System (DADS)';
+  static const String designSystemName = 'Digital Agency Design System (DADS)';
   static const String designSystemUrl = 'https://design.digital.go.jp/';
   static const String designSystemLicense = 'CC BY 4.0';
 }

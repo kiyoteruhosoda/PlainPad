@@ -4,7 +4,7 @@ import 'package:plainpad/application/usecases/theme/set_theme_preference_usecase
 import 'package:plainpad/domain/repositories/theme_preference_repository.dart';
 import 'package:plainpad/shared/value_objects/app_theme_mode.dart';
 
-// ─── Fake repository ──────────────────────────────────────────────────────────
+// ─── Fake repository ─────────────────────────────────────────────────────────
 
 class _FakeThemePreferenceRepository implements ThemePreferenceRepository {
   AppThemeMode _mode = AppThemeMode.light;

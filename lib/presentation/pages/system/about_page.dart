@@ -58,7 +58,7 @@ class _AboutPageState extends State<AboutPage> {
     final colorScheme = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppMainHeader(title: AppStrings.aboutTitle),
+      appBar: const AppMainHeader(title: AppStrings.aboutTitle),
       body: switch (_viewModel.state) {
         AboutState.loading => const AppLoadingView(),
         AboutState.error => AppErrorView(
@@ -76,17 +76,7 @@ class _AboutPageState extends State<AboutPage> {
       padding: const EdgeInsets.all(AppSpacing.pageMargin),
       children: [
         const SizedBox(height: AppSpacing.xl),
-        Center(
-          child: Container(
-            width: AppSpacing.aboutIconContainer,
-            height: AppSpacing.aboutIconContainer,
-            decoration: BoxDecoration(
-              color: colorScheme.primaryContainer,
-              borderRadius: AppRadius.xlBorder,
-            ),
-            child: Icon(Icons.web_asset, size: AppSpacing.aboutIconSize, color: colorScheme.primary),
-          ),
-        ),
+        const Center(child: AppIconMark()),
         const SizedBox(height: AppSpacing.xl),
         Center(
           child: Text(
@@ -114,15 +104,19 @@ class _AboutPageState extends State<AboutPage> {
                 onTap: _onVersionTapped,
               ),
               const Divider(height: AppSpacing.xl),
-              _InfoRow(label: AppStrings.aboutBuildNumber, value: info.buildNumber),
+              _InfoRow(
+                  label: AppStrings.aboutBuildNumber, value: info.buildNumber),
               const Divider(height: AppSpacing.xl),
               _InfoRow(label: AppStrings.aboutGitCommit, value: info.gitCommit),
               const Divider(height: AppSpacing.xl),
-              _InfoRow(label: AppStrings.aboutFlutterVersion, value: info.flutterVersion),
-              const Divider(height: AppSpacing.xl),
-              _InfoRow(label: AppStrings.aboutDartVersion, value: info.dartVersion),
+              _InfoRow(
+                  label: AppStrings.aboutFlutterVersion,
+                  value: info.flutterVersion),
               const Divider(height: AppSpacing.xl),
               _InfoRow(
+                  label: AppStrings.aboutDartVersion, value: info.dartVersion),
+              const Divider(height: AppSpacing.xl),
+              const _InfoRow(
                 label: AppStrings.aboutPlatform,
                 value: AppStrings.aboutPlatformValue,
               ),

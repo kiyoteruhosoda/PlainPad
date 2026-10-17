@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../config/app_config.dart';
+import 'package:plainpad/shared/config/app_config.dart';
 
 /// Typography tokens — font size, weight, and spacing only.
 /// Colors are intentionally omitted so widgets inherit the correct

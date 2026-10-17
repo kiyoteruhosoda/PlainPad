@@ -7,10 +7,19 @@ analyzer:
   exclude:
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   rules:
     - always_declare_return_types
+    # Package imports only. `prefer_relative_imports` is deliberately NOT
+    # enabled: the two rules are mutually exclusive (task #452).
     - always_use_package_imports
     - avoid_dynamic_calls
     - avoid_print
@@ -25,7 +34,6 @@ linter:
     - prefer_const_declarations
     - prefer_final_fields
     - prefer_final_locals
-    - prefer_relative_imports
     - sort_pub_dependencies
     - unawaited_futures
     - unnecessary_lambdas

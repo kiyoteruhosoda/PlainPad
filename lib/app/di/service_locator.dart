@@ -1,6 +1,4 @@
 import 'package:get_it/get_it.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
 import 'package:plainpad/application/usecases/app_info/get_app_info_usecase.dart';
 import 'package:plainpad/application/usecases/debug/get_debug_settings_usecase.dart';
 import 'package:plainpad/application/usecases/debug/set_debug_mode_usecase.dart';
@@ -25,6 +23,7 @@ import 'package:plainpad/presentation/viewmodels/debug_viewmodel.dart';
 import 'package:plainpad/presentation/viewmodels/editor_viewmodel.dart';
 import 'package:plainpad/presentation/viewmodels/theme_viewmodel.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 final GetIt sl = GetIt.instance;
 

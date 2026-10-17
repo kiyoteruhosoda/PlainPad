@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
+import 'package:plainpad/app/di/service_locator.dart';
 import 'package:plainpad/application/dto/app_info_dto.dart';
 import 'package:plainpad/application/usecases/app_info/get_app_info_usecase.dart';
-import 'package:plainpad/app/di/service_locator.dart';
 import 'package:plainpad/shared/errors/app_error.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
 
@@ -34,11 +34,14 @@ class AboutViewModel extends ChangeNotifier {
     try {
       _appInfo = await _getAppInfo.execute();
       _state = AboutState.loaded;
-      sl<AppLogger>().debug('[AboutViewModel] loadAppInfo success — v${_appInfo?.version}');
+      sl<AppLogger>().debug(
+          '[AboutViewModel] loadAppInfo success — v${_appInfo?.version}');
     } catch (e, st) {
-      _error = UnexpectedError('Failed to load app info', cause: e, stackTrace: st);
+      _error =
+          UnexpectedError('Failed to load app info', cause: e, stackTrace: st);
       _state = AboutState.error;
-      sl<AppLogger>().error('[AboutViewModel] loadAppInfo failed', error: e, stackTrace: st);
+      sl<AppLogger>().error('[AboutViewModel] loadAppInfo failed',
+          error: e, stackTrace: st);
     } finally {
       notifyListeners();
     }

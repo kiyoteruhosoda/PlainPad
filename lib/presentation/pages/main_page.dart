@@ -44,100 +44,100 @@ class _MainPageState extends State<MainPage> {
         }
       },
       child: Scaffold(
-      appBar: AppMainHeader(
-        title: AppConfig.appName,
-        leading: Builder(
-          builder: (context) => IconButton(
-            icon: const Icon(Icons.menu),
-            onPressed: () => Scaffold.of(context).openDrawer(),
-            tooltip: AppStrings.commonMenu,
+        appBar: AppMainHeader(
+          title: AppConfig.appName,
+          leading: Builder(
+            builder: (context) => IconButton(
+              icon: const Icon(Icons.menu),
+              onPressed: () => Scaffold.of(context).openDrawer(),
+              tooltip: AppStrings.commonMenu,
+            ),
           ),
         ),
-      ),
-      drawer: ListenableBuilder(
-        listenable: sl<DebugSettingsViewModel>(),
-        builder: (context, _) {
-          final debugEnabled = sl<DebugSettingsViewModel>().debugEnabled;
-          return AppDrawer(
-            appName: AppConfig.appName,
-            headerSubtitle: AppConfig.appTagline,
-            items: [
-              AppDrawerItem(
-                label: AppStrings.navHome,
-                icon: Icons.description_outlined,
-                isSelected: _selectedIndex == 0,
-                onTap: () {
-                  setState(() => _selectedIndex = 0);
-                  Navigator.of(context).pop();
-                },
-              ),
-              AppDrawerItem(
-                label: AppStrings.navSettings,
-                icon: Icons.settings_outlined,
-                isSelected: _selectedIndex == 1,
-                onTap: () {
-                  setState(() => _selectedIndex = 1);
-                  Navigator.of(context).pop();
-                },
-              ),
-              const AppDrawerItem.divider(),
-            ],
-            bottomItems: [
-              AppDrawerItem(
-                label: AppStrings.drawerAbout,
-                icon: Icons.info_outline,
-                onTap: () {
-                  Navigator.of(context).pop();
-                  Navigator.of(context).pushNamed('/about');
-                },
-              ),
-              AppDrawerItem(
-                label: AppStrings.drawerLicenses,
-                icon: Icons.description_outlined,
-                onTap: () {
-                  Navigator.of(context).pop();
-                  openAppLicensePage(context);
-                },
-              ),
-              if (debugEnabled) ...[
+        drawer: ListenableBuilder(
+          listenable: sl<DebugSettingsViewModel>(),
+          builder: (context, _) {
+            final debugEnabled = sl<DebugSettingsViewModel>().debugEnabled;
+            return AppDrawer(
+              appName: AppConfig.appName,
+              headerSubtitle: AppConfig.appTagline,
+              items: [
                 AppDrawerItem(
-                  label: AppStrings.drawerLogs,
-                  icon: Icons.list_alt_outlined,
+                  label: AppStrings.navHome,
+                  icon: Icons.description_outlined,
+                  isSelected: _selectedIndex == 0,
                   onTap: () {
+                    setState(() => _selectedIndex = 0);
                     Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/logs');
                   },
                 ),
                 AppDrawerItem(
-                  label: AppStrings.drawerDebug,
-                  icon: Icons.bug_report_outlined,
+                  label: AppStrings.navSettings,
+                  icon: Icons.settings_outlined,
+                  isSelected: _selectedIndex == 1,
                   onTap: () {
+                    setState(() => _selectedIndex = 1);
                     Navigator.of(context).pop();
-                    Navigator.of(context).pushNamed('/debug');
                   },
                 ),
+                const AppDrawerItem.divider(),
               ],
-            ],
-          );
-        },
-      ),
-      body: _buildTabContent(),
-      floatingActionButton:
-          _selectedIndex == 0 ? const EditorFloatingActions() : null,
-      bottomNavigationBar: NavigationBar(
-        selectedIndex: _selectedIndex,
-        onDestinationSelected: (index) =>
-            setState(() => _selectedIndex = index),
-        destinations: _tabs
-            .map(
-              (tab) => NavigationDestination(
-                icon: Icon(tab.icon),
-                selectedIcon: Icon(tab.selectedIcon),
-                label: tab.label,
-              ),
-            )
-            .toList(),
-      ),
+              bottomItems: [
+                AppDrawerItem(
+                  label: AppStrings.drawerAbout,
+                  icon: Icons.info_outline,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    Navigator.of(context).pushNamed('/about');
+                  },
+                ),
+                AppDrawerItem(
+                  label: AppStrings.drawerLicenses,
+                  icon: Icons.description_outlined,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    openAppLicensePage(context);
+                  },
+                ),
+                if (debugEnabled) ...[
+                  AppDrawerItem(
+                    label: AppStrings.drawerLogs,
+                    icon: Icons.list_alt_outlined,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed('/logs');
+                    },
+                  ),
+                  AppDrawerItem(
+                    label: AppStrings.drawerDebug,
+                    icon: Icons.bug_report_outlined,
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      Navigator.of(context).pushNamed('/debug');
+                    },
+                  ),
+                ],
+              ],
+            );
+          },
+        ),
+        body: _buildTabContent(),
+        floatingActionButton:
+            _selectedIndex == 0 ? const EditorFloatingActions() : null,
+        bottomNavigationBar: NavigationBar(
+          selectedIndex: _selectedIndex,
+          onDestinationSelected: (index) =>
+              setState(() => _selectedIndex = index),
+          destinations: _tabs
+              .map(
+                (tab) => NavigationDestination(
+                  icon: Icon(tab.icon),
+                  selectedIcon: Icon(tab.selectedIcon),
+                  label: tab.label,
+                ),
+              )
+              .toList(),
+        ),
       ),
     );
   }
@@ -163,10 +163,10 @@ class _SettingsContent extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(AppSpacing.pageMargin),
       children: [
-        AppSectionHeader(title: AppStrings.settingsTitle),
+        const AppSectionHeader(title: AppStrings.settingsTitle),
         const SizedBox(height: AppSpacing.lg),
         // ── Theme switcher ──────────────────────────────────────────
-        AppSectionHeader(title: AppStrings.settingsTheme),
+        const AppSectionHeader(title: AppStrings.settingsTheme),
         const SizedBox(height: AppSpacing.sm),
         ListenableBuilder(
           listenable: themeViewModel,
@@ -211,7 +211,7 @@ class _SettingsContent extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: AppSpacing.lg),
-                AppSectionHeader(title: AppStrings.settingsDeveloper),
+                const AppSectionHeader(title: AppStrings.settingsDeveloper),
                 const SizedBox(height: AppSpacing.sm),
                 AppCard(
                   child: Column(
@@ -221,8 +221,7 @@ class _SettingsContent extends StatelessWidget {
                         onChanged: debugViewModel.setDebugEnabled,
                         secondary: Icon(
                           Icons.bug_report_outlined,
-                          color:
-                              Theme.of(context).colorScheme.onSurfaceVariant,
+                          color: Theme.of(context).colorScheme.onSurfaceVariant,
                         ),
                         title: Text(
                           AppStrings.settingsDebugMode,
@@ -314,10 +313,8 @@ class _ThemeOptionTile extends StatelessWidget {
       title: Text(
         label,
         style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color:
-                  selected ? colorScheme.primary : colorScheme.onSurface,
-              fontWeight:
-                  selected ? FontWeight.w700 : FontWeight.w400,
+              color: selected ? colorScheme.primary : colorScheme.onSurface,
+              fontWeight: selected ? FontWeight.w700 : FontWeight.w400,
             ),
       ),
       trailing: selected

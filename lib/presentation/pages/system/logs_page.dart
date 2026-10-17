@@ -69,8 +69,9 @@ class _LogsPageState extends State<LogsPage> {
   Future<void> _exportLogs() async {
     final path = await _logger.exportLogs();
     if (!mounted) return;
-    final msg =
-        path != null ? AppStrings.logsDownloadSuccess : AppStrings.logsDownloadError;
+    final msg = path != null
+        ? AppStrings.logsDownloadSuccess
+        : AppStrings.logsDownloadError;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
   }
 
@@ -168,7 +169,8 @@ class _FilterChip extends StatelessWidget {
       selectedColor: colorScheme.primaryContainer,
       checkmarkColor: colorScheme.primary,
       labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            color:
+                selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
           ),
       side: BorderSide(
         color: selected ? colorScheme.primary : colorScheme.outline,
@@ -177,7 +179,7 @@ class _FilterChip extends StatelessWidget {
   }
 }
 
-// ─── Log entry tile ───────────────────────────────────────────────────────────
+// ─── Log entry tile ──────────────────────────────────────────────────────────
 
 class _LogEntryTile extends StatelessWidget {
   const _LogEntryTile({required this.entry});

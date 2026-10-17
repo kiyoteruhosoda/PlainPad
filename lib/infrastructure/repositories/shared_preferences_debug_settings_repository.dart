@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:plainpad/domain/repositories/debug_settings_repository.dart';
 import 'package:plainpad/shared/logging/log_level.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// [DebugSettingsRepository] backed by [SharedPreferences].
 final class SharedPreferencesDebugSettingsRepository

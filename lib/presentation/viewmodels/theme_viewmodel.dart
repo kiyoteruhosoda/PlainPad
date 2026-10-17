@@ -13,7 +13,8 @@ class ThemeViewModel extends ChangeNotifier {
     this._setThemePreference,
   ) {
     _themeMode = _toFlutterMode(_getThemePreference.execute());
-    sl<AppLogger>().debug('[ThemeViewModel] init — themeMode: ${_themeMode.name}');
+    sl<AppLogger>()
+        .debug('[ThemeViewModel] init — themeMode: ${_themeMode.name}');
   }
 
   final GetThemePreferenceUseCase _getThemePreference;

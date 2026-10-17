@@ -9,7 +9,7 @@ import 'package:plainpad/presentation/viewmodels/theme_viewmodel.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
 import 'package:plainpad/shared/value_objects/app_theme_mode.dart';
 
-// ─── Fake repository ──────────────────────────────────────────────────────────
+// ─── Fake repository ─────────────────────────────────────────────────────────
 
 class _FakeThemePreferenceRepository implements ThemePreferenceRepository {
   _FakeThemePreferenceRepository([this._mode = AppThemeMode.light]);
@@ -41,7 +41,7 @@ void main() {
       sl.registerSingleton<AppLogger>(PersistentAppLogger());
     }
   });
-  tearDownAll(() => sl.reset());
+  tearDownAll(sl.reset);
 
   group('ThemeViewModel', () {
     test('defaults to light mode when no preference is saved', () {

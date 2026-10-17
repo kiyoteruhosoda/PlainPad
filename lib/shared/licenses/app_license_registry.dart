@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 
-import '../config/app_config.dart';
+import 'package:plainpad/shared/config/app_config.dart';
 
 /// Registers additional in-app license notices with [LicenseRegistry].
 ///
@@ -19,14 +19,16 @@ class AppLicenseRegistrar {
     yield const LicenseEntryWithLineBreaks(
       ['Noto Sans JP'],
       'Copyright 2014-2023 Adobe (http://www.adobe.com/), with Reserved Font '
-          'Name "Source". All Rights Reserved. Noto is a trademark of Google LLC.\n\n'
-          'This Font Software is licensed under the SIL Open Font License, Version 1.1.',
+      'Name "Source". All Rights Reserved. Noto is a trademark of Google '
+      'LLC.\n\n'
+      'This Font Software is licensed under the SIL Open Font License, '
+      'Version 1.1.',
     );
     yield const LicenseEntryWithLineBreaks(
       [AppConfig.designSystemName],
       'Design tokens are derived from the ${AppConfig.designSystemName}, '
-          'distributed under the ${AppConfig.designSystemLicense} license. '
-          'See ${AppConfig.designSystemUrl} for details.',
+      'distributed under the ${AppConfig.designSystemLicense} license. '
+      'See ${AppConfig.designSystemUrl} for details.',
     );
   }
 }

@@ -1,6 +1,7 @@
 name: Test
 
-# 変更の申請（PR）と main への push で `flutter test` を流す（task #408・#410）。
+# 変更の申請（PR）と main への push で `flutter analyze` と `flutter test` を流す
+# （task #408・#410・#452）。
 # 読むだけの検査で、版上げ・配布はしない（それは version_bump.yml と deck）。
 
 on:
@@ -40,5 +41,20 @@ jobs:
       - name: pub get
         run: flutter pub get --enforce-lockfile
 
+      # wbstimer・foodexpiryapp と同じく info も落とす（task #452）。
+      - name: Analyze
+        run: flutter analyze --fatal-infos
+
       - name: Tests
         run: flutter test
+
+      # 画面試験が撮った画像（test/helpers/screenshot.dart、task #451）。
+      # ⚠ v4 以降は act_runner で黙って何も上げない。このタグで固定する。
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v3.2.2-node20
+        with:
+          name: screenshots
+          path: build/screenshots/
+          retention-days: 14
+          if-no-files-found: ignore
