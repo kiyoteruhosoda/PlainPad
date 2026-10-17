@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,6 +11,16 @@ import 'package:plainpad/presentation/widgets/ui/widgets.dart';
 import '../../helpers/app_harness.dart';
 import '../../helpers/screenshot.dart';
 
+/// `version: <name>+<build>` from pubspec.yaml, handed to PackageInfo as the
+/// installed version (task #468).
+final ({String name, String build}) _pubspecVersion = () {
+  final line = File('pubspec.yaml')
+      .readAsLinesSync()
+      .firstWhere((l) => l.startsWith('version:'));
+  final parts = line.substring('version:'.length).trim().split('+');
+  return (name: parts[0], build: parts[1]);
+}();
+
 /// The About and Licenses pages show the app's own icon — the launcher's
 /// notepad — not the template's generic placeholder (task #451).
 void main() {
@@ -17,8 +28,8 @@ void main() {
     PackageInfo.setMockInitialValues(
       appName: 'PlainPad',
       packageName: 'com.nolumia.plainpad',
-      version: '1.7.1',
-      buildNumber: '54',
+      version: _pubspecVersion.name,
+      buildNumber: _pubspecVersion.build,
       buildSignature: '',
     );
   });
@@ -40,6 +51,20 @@ void main() {
     expect(find.byType(AppIconMark), findsOneWidget);
     expect(find.byIcon(Icons.web_asset), findsNothing);
     await saveScreenshot(find.byType(AboutPage), 'about');
+  });
+
+  testWidgets('About shows the installed version and build number',
+      (tester) async {
+    // Not BuildInfo's placeholder ("26"), which only the release regenerates
+    // (task #468).
+    final context = await startApp(tester);
+
+    unawaited(Navigator.of(context).pushNamed('/about'));
+    await settle(tester);
+
+    expect(find.text(_pubspecVersion.name), findsOneWidget);
+    expect(find.text(_pubspecVersion.build), findsOneWidget);
+    await saveScreenshot(find.byType(AboutPage), 'about_version');
   });
 
   testWidgets('Licenses shows the app icon', (tester) async {

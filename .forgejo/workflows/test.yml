@@ -41,6 +41,12 @@ jobs:
       - name: pub get
         run: flutter pub get --enforce-lockfile
 
+      # pub get の生成物（.dart_tool/ など）は .gitignore が受ける（task #468）。
+      - name: Nothing untracked after pub get
+        run: |
+          git status --porcelain --untracked-files=all
+          test -z "$(git status --porcelain --untracked-files=all)"
+
       # wbstimer・foodexpiryapp と同じく info も落とす（task #452）。
       - name: Analyze
         run: flutter analyze --fatal-infos
@@ -91,3 +97,10 @@ jobs:
             echo "::error::Flutter warns about the Kotlin Gradle Plugin (task #453)"
             exit 1
           fi
+
+      # ビルドの生成物（local.properties・gradlew・GeneratedPluginRegistrant
+      # など）も .gitignore が受ける（task #468）。build.log はこのジョブが書いたもの。
+      - name: Nothing untracked after the build
+        run: |
+          git status --porcelain --untracked-files=all -- . ':!build.log'
+          test -z "$(git status --porcelain --untracked-files=all -- . ':!build.log')"
