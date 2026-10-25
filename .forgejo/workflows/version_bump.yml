@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - main
+    # ⚠ CI の設定（.forgejo/）だけの push では版を上げない（2026-10-25）。台の像の digest は週次の作り直し
+    #   （deploy-repo host/builder-rebuild）が上げるので、上げると毎週アプリが配り直される。
+    paths-ignore:
+      - ".forgejo/**"
   workflow_dispatch:
     inputs:
       bump_type:
