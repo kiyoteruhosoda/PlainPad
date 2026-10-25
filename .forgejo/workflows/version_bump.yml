@@ -38,7 +38,7 @@ jobs:
     # ⚠ **ジョブのイメージに node が要る。** `uses:` の JS アクションは
     #   ジョブのコンテナの中の node を呼ぶ。
     container:
-      image: hub.nolumia.com:5000/builder/ci-python311@sha256:c6db7656b1a48195fde17e0c25c2f9e2d01dae78f09df73a74dcb1a24da53b45
+      image: hub.nolumia.com:5000/builder/ci-python311@sha256:da077c4de9b5ef73f9044229869f426f156e684a037ece34942a45a906fba9f4
     # ⚠ 既定は 6 時間。ぶら下がったジョブが台を食い潰すので上限を置く。
     timeout-minutes: 20
     steps:
