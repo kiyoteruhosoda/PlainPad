@@ -27,7 +27,7 @@ jobs:
     # ⚠ キャッシュは `actions/cache` ではなく名前付きボリューム（台の
     #   `valid_volumes` が `flutter-pub-cache` を許している）。
     container:
-      image: hub.nolumia.com:5000/builder/ci-flutter@sha256:5c2c5942a6e77dca2d3a0fc7d2b08d96d0a9aa89bfc1c01ada48eea1fcc82aee
+      image: hub.nolumia.com:5000/builder/ci-flutter@sha256:15f3a44967d256e7e79b9344de432a268d69f026c2ef4f7e22178b1145801f3d
       options: >-
         -v flutter-pub-cache:/cache/pub
     env:
@@ -73,7 +73,7 @@ jobs:
     runs-on: [self-hosted, nolumialab]
     timeout-minutes: 40
     container:
-      image: hub.nolumia.com:5000/builder/ci-flutter@sha256:5c2c5942a6e77dca2d3a0fc7d2b08d96d0a9aa89bfc1c01ada48eea1fcc82aee
+      image: hub.nolumia.com:5000/builder/ci-flutter@sha256:15f3a44967d256e7e79b9344de432a268d69f026c2ef4f7e22178b1145801f3d
       options: >-
         -v flutter-pub-cache:/cache/pub
         -v flutter-gradle-cache-plainpad-ci:/cache/gradle
