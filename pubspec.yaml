@@ -19,7 +19,7 @@ dependencies:
   flutter_riverpod: ^2.5.1
 
   # DI
-  get_it: ^7.7.0
+  get_it: ^9.0.0
 
   # Navigation
   go_router: ^18.0.0
