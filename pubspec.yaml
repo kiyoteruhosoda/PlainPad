@@ -51,7 +51,7 @@ dev_dependencies:
   # (silently skips mipmap-anydpi-v26 output). 0.14+ also unlocks the
   # `adaptive_icon_monochrome` knob used for Android 13+ themed icons.
   flutter_launcher_icons: ^0.14.3
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
   flutter_test:
     sdk: flutter
   integration_test:
