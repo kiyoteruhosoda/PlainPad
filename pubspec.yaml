@@ -16,7 +16,7 @@ dependencies:
     sdk: flutter
 
   # State management
-  flutter_riverpod: ^2.5.1
+  flutter_riverpod: ^3.0.0
 
   # DI
   get_it: ^9.0.0
@@ -33,7 +33,7 @@ dependencies:
 
   # Log files directory
   path_provider: ^2.1.0
-  riverpod_annotation: ^2.3.5
+  riverpod_annotation: ^4.0.0
 
   # Shared preferences
   shared_preferences: ^2.3.0
@@ -57,7 +57,7 @@ dev_dependencies:
   integration_test:
     sdk: flutter
   mockito: ^5.4.4
-  riverpod_generator: ^2.4.3
+  riverpod_generator: ^4.0.0
   sqflite_common_ffi: ^2.3.3
 
 flutter:
