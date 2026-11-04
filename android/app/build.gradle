@@ -65,7 +65,7 @@ def appArchivesBase  = (project.findProperty("app.archivesBaseName")
 
 android {
     namespace = appNamespace
-    compileSdk = 36
+    compileSdk = 37
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_21
