@@ -6,7 +6,8 @@ import 'package:plainpad/shared/l10n/app_strings.dart';
 import 'package:plainpad/shared/logging/app_logger.dart';
 import 'package:plainpad/shared/theme/theme.dart';
 
-/// Displays the in-memory log buffer with level filtering and export.
+/// Displays the in-memory log buffer with level filtering, saving and
+/// sharing (task #913).
 class LogsPage extends StatefulWidget {
   const LogsPage({super.key});
 
@@ -30,6 +31,11 @@ class _LogsPageState extends State<LogsPage> {
             icon: const Icon(Icons.download_outlined),
             tooltip: AppStrings.logsDownload,
             onPressed: _exportLogs,
+          ),
+          IconButton(
+            icon: const Icon(Icons.share_outlined),
+            tooltip: AppStrings.logsShare,
+            onPressed: _shareLogs,
           ),
           IconButton(
             icon: const Icon(Icons.delete_outline),
@@ -66,13 +72,28 @@ class _LogsPageState extends State<LogsPage> {
     );
   }
 
+  /// Opens Android's "save to" screen; says where the file went, or nothing
+  /// when the person backed out.
   Future<void> _exportLogs() async {
-    final path = await _logger.exportLogs();
+    final result = await _logger.exportLogs();
     if (!mounted) return;
-    final msg = path != null
-        ? AppStrings.logsDownloadSuccess
-        : AppStrings.logsDownloadError;
+    final msg = switch (result) {
+      LogExportSaved(:final fileName, folder: final String folder) =>
+        AppStrings.logsSavedTo(fileName, folder),
+      LogExportSaved(:final fileName) => AppStrings.logsSaved(fileName),
+      LogExportCancelled() => null,
+      LogExportFailed() => AppStrings.logsDownloadError,
+    };
+    if (msg == null) return;
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(msg)));
+  }
+
+  /// Opens Android's share sheet with the logs as a file.
+  Future<void> _shareLogs() async {
+    final shared = await _logger.shareLogs();
+    if (shared || !mounted) return;
+    ScaffoldMessenger.of(context)
+        .showSnackBar(const SnackBar(content: Text(AppStrings.logsShareError)));
   }
 
   Future<void> _confirmClear() async {
@@ -169,9 +190,8 @@ class _FilterChip extends StatelessWidget {
       selectedColor: colorScheme.primaryContainer,
       checkmarkColor: colorScheme.primary,
       labelStyle: Theme.of(context).textTheme.labelSmall?.copyWith(
-            color:
-                selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
-          ),
+        color: selected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+      ),
       side: BorderSide(
         color: selected ? colorScheme.primary : colorScheme.outline,
       ),
@@ -205,9 +225,8 @@ class _LogEntryTile extends StatelessWidget {
     return InkWell(
       onLongPress: () {
         Clipboard.setData(ClipboardData(text: entry.toLogLine()));
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text(AppStrings.logsCopied)),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text(AppStrings.logsCopied)));
       },
       child: Padding(
         padding: const EdgeInsets.symmetric(
@@ -228,10 +247,8 @@ class _LogEntryTile extends StatelessWidget {
               ),
               child: Text(
                 entry.levelLabel,
-                style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                      color: color,
-                      fontWeight: FontWeight.w700,
-                    ),
+                style: Theme.of(context).textTheme.labelSmall
+                    ?.copyWith(color: color, fontWeight: FontWeight.w700),
               ),
             ),
             const SizedBox(width: AppSpacing.sm),
@@ -247,8 +264,8 @@ class _LogEntryTile extends StatelessWidget {
                     Text(
                       '${entry.error}',
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.error,
-                          ),
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
                 ],
               ),
@@ -257,8 +274,8 @@ class _LogEntryTile extends StatelessWidget {
             Text(
               ts,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurfaceVariant,
-                  ),
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
             ),
           ],
         ),

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- What LogFileProvider may hand out: the one copy of the logs being shared,
+     under cacheDir/shared_logs (MainActivity.LOG_SHARE_DIR), and nothing else. -->
+<paths>
+    <cache-path name="shared_logs" path="shared_logs/" />
+</paths>
