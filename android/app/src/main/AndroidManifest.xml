@@ -48,6 +48,20 @@
                 <data android:mimeType="application/x-yaml"/>
             </intent-filter>
         </activity>
+        <!-- Shares the logs as a file (☰ → Logs → share): a content: URI,
+             since a file: URI is refused on Android 7+. Only the one copy
+             under cache/shared_logs is reachable, and only for the intent
+             it is granted to. task #913 -->
+        <provider
+            android:name=".LogFileProvider"
+            android:authorities="${applicationId}.logs"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/log_file_paths" />
+        </provider>
+
         <meta-data
             android:name="flutterEmbedding"
             android:value="2" />

@@ -92,9 +92,13 @@ class AppStrings {
   static const String logsClearConfirmBody =
       'Delete all log entries from memory?';
   static const String logsClearSuccess = 'Logs cleared';
-  static const String logsDownload = 'Export';
-  static const String logsDownloadSuccess = 'Logs saved to file';
+  static const String logsDownload = 'Save to a file';
+  static String logsSavedTo(String fileName, String folder) =>
+      'Saved $fileName to $folder';
+  static String logsSaved(String fileName) => 'Saved $fileName';
   static const String logsDownloadError = 'Failed to save logs';
+  static const String logsShare = 'Share';
+  static const String logsShareError = 'Could not open the share screen';
   static const String logsEmpty = 'No log entries';
   static const String logsCancel = 'Cancel';
   static const String logsConfirm = 'Clear';
