@@ -1,13 +1,10 @@
 name: Version Bump
 
+# ⚠ **Manual version bumps only.** The bump (= release) on a push to main is done by
+#   the last job of quality.yml, `bump-version`, only when every check on the same
+#   commit is green (task #994, flutterbase ADR-0019). This used to run on push alongside Quality,
+#   and releases went out even with red tests. Do not bring the push trigger back here.
 on:
-  push:
-    branches:
-      - main
-    # ⚠ Do not bump the version on pushes that only touch CI config (.forgejo/) (2026-10-25). The weekly rebuild
-    #   (deploy-repo host/builder-rebuild) bumps the runner image digests, so bumping would redeploy the app every week.
-    paths-ignore:
-      - ".forgejo/**"
   workflow_dispatch:
     inputs:
       bump_type:
@@ -27,65 +24,27 @@ env:
 permissions:
   contents: write
 
-# Runs on the self-hosted runner on nolumialab (moved from GitHub to forge on 2026-09-28).
+# Runs on the nolumialab self-hosted runner (changed when moving to forge).
 jobs:
   bump-version:
-    # ⚠ **Do not trigger ourselves with our own version bump.** The push below is made by a real
-    #   user (actions-push), which, unlike GITHUB_TOKEN, triggers the next workflow. Stop that one run here.
-    if: github.actor != 'actions-push'
-    # Releases are queued to deck by forge's push notification (nolumiadeck ADR-0119;
-    # the hook /api/release/hooks/push/app/plainpad is set up by the host job nolumia-forge-links).
-    # Whether it may be deployed is decided by deploy-repo's resources/flutter-apps.json.
-    # This job only bumps the version and pushes it back, so it runs on a light runner without docker or credentials.
-    # The notification still arrives for the bump commit with [skip ci] (skip only affects workflows).
     runs-on: [self-hosted, nolumialab]
-    # ⚠ **The job image needs node.** JS actions in `uses:` call
-    #   node inside the job container.
+    # ⚠ **The job image needs node.** JS actions in `uses:` call node inside
+    #   the job container -- a plain python image fails right at checkout with
+    #   `exec: "node": executable file not found`.
+    #   This job only uses git and bash, so the lighter image is enough.
     container:
       image: hub.nolumia.com:5000/builder/ci-python311@sha256:da68dafef0d3aff23c1abf1bc4e9d43d8a16f87b8511a637198547c6509744cf
-    # ⚠ The default is 6 hours. Set a limit so a hung job does not hog the runner.
+    # ⚠ The default is 6 hours. A hung job would eat the runner, so set a ceiling.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          # ⚠ **GITHUB_TOKEN cannot push to the protected main.** forge's
-          #   pre-receive cannot resolve the Actions pseudo user (uid -2) and returns 500
-          #   (unresolved upstream bug forgejo/forgejo#11159). Check out and push with the token
-          #   of the real user actions-push (an Actions secret of kyon).
+          # ⚠ **GITHUB_TOKEN cannot push to the protected main.** forge's pre-receive
+          #   cannot look up the Actions pseudo user (uid -2) and returns 500
+          #   (an unresolved upstream bug, forgejo/forgejo#11159). Check out and push with
+          #   the token of the real user actions-push (kyon's Actions secret).
           token: ${{ secrets.PUSH_TOKEN }}
 
-      - name: Configure git
-        run: |
-          git config user.name "forge-actions[bot]"
-          git config user.email "forge-actions[bot]@nolumia.com"
-
-      - name: Resolve bump type
-        id: bump-type
-        run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            echo "value=${{ inputs.bump_type }}" >> "$GITHUB_OUTPUT"
-          else
-            echo "value=auto" >> "$GITHUB_OUTPUT"
-          fi
-
-      - name: Bump version
-        id: bump
-        run: bash scripts/bump_version.sh "${{ steps.bump-type.outputs.value }}"
-
-      - name: Create version tag
-        if: steps.bump.outputs.new_version != ''
-        run: |
-          VERSION="v${{ steps.bump.outputs.new_version }}"
-          git add pubspec.yaml
-          # ⚠ **Do not remove `[skip ci]`.** Unlike GITHUB_TOKEN, a push by actions-push
-          #   triggers workflows. When triggered, forge cancels the older run on the same branch (this run),
-          #   and it ends without running the later steps (measured on 2026-09-27).
-          git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version_full }} [skip ci]"
-          if git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1; then
-            echo "Tag $VERSION already exists, skipping tag creation."
-            git push origin main
-          else
-            git tag "$VERSION"
-            git push origin main --tags
-          fi
+      - name: Bump the version and push (deck publishes on this push)
+        run: bash scripts/release_version_bump.sh "${{ inputs.bump_type }}"

@@ -1,8 +1,14 @@
 name: Test
 
+# The last job, `bump-version`, releases: on a push to main, and only after
+# every other job here passed on that same commit, it bumps the version and
+# pushes it — that push is what makes deck build and publish (flutterbase ADR-0019,
+# docs/RELEASE.md). On pull requests it only checks that it waits for every
+# job. The manual bump stays in version_bump.yml.
+
 # Run `flutter analyze` and `flutter test` on pull requests and pushes to main
 # (task #408, #410, #452).
-# A read-only check; it does not bump the version or deploy (that is version_bump.yml and deck).
+# The last job, bump-version, is the only one that bumps the version (on a push to main, after every check passed; deck deploys).
 
 on:
   pull_request:
@@ -104,3 +110,72 @@ jobs:
         run: |
           git status --porcelain --untracked-files=all -- . ':!build.log'
           test -z "$(git status --porcelain --untracked-files=all -- . ':!build.log')"
+
+  # ── Version bump (= release). task #994, flutterbase ADR-0019 ──────────────────────────
+  # ⚠ **Runs only when every check above is green.** version_bump.yml used to run on
+  #   push alongside Quality, so the version went up and deck released even with red
+  #   tests (2026-11-12, AutoRule 1.33.0). Rather than relying on workflow_run in forge
+  #   (Forgejo 15), chain with needs in the same run -- only this commit's results count.
+  # ⚠ **When adding a job to this file, add it to needs too.** Otherwise a red result
+  #   in that job still releases. The check below (check_bump_waits_for_quality.py) fails PRs that forget.
+  # ⚠ Runs triggered by our own bump push (actions-push) do nothing.
+  bump-version:
+    name: Version bump (on push to main, only when every check above is green)
+    needs: [test, android-build]
+    if: success() && github.actor != 'actions-push'
+    runs-on: [self-hosted, nolumialab]
+    # Uses only git, bash and python3, so the light image is enough (node is needed by checkout).
+    container:
+      image: hub.nolumia.com:5000/builder/ci-python311@sha256:da68dafef0d3aff23c1abf1bc4e9d43d8a16f87b8511a637198547c6509744cf
+    timeout-minutes: 20
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+          # ⚠ GITHUB_TOKEN cannot push to the protected main (forgejo/forgejo#11159).
+          #   Only on a push to main, check out with the actions-push token (kyon's Actions secret).
+          token: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') && secrets.PUSH_TOKEN || github.token }}
+
+      - name: This job waits for every Quality job
+        run: python3 scripts/check_bump_waits_for_quality.py .forgejo/workflows/test.yml
+
+      # ⚠ A push that only touches CI settings (.forgejo/) does not bump (rule since 2026-10-25:
+      #   the weekly rebuild bumps the runner image digests, so bumping would re-release every week).
+      #   ⚠ **Compare against the last release tag, not the previous push.** Comparing with the
+      #   previous push leaves changes from cancelled or red runs unreleased after a later
+      #   .forgejo/-only push (measured in a trial repository). Bump if anything changed since
+      #   the last release outside NO_RELEASE_PATHS (extended regex). Derived apps may add paths here.
+      - name: Decide whether this push releases
+        id: decide
+        env:
+          NO_RELEASE_PATHS: '^\.forgejo/'
+          EVENT: ${{ github.event_name }}
+          REF: ${{ github.ref }}
+        run: |
+          if [ "$EVENT" != push ] || [ "$REF" != refs/heads/main ]; then
+            echo "Not a push to main ($EVENT $REF); no release."
+            echo "bump=false" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          # Same tag lookup as scripts/bump_version.sh.
+          last_tag="$(git tag --list 'v[0-9]*' --sort=-v:refname | head -1)"
+          if [ -z "$last_tag" ]; then
+            echo "No version tag yet; releasing."
+            echo "bump=true" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+          changed="$(git diff --name-only "$last_tag" HEAD)"
+          echo "Changed since $last_tag:"
+          printf '%s\n' "$changed"
+          if [ -z "$(printf '%s\n' "$changed" | grep -Ev "$NO_RELEASE_PATHS" | grep -v '^$' || true)" ]; then
+            echo "Nothing outside $NO_RELEASE_PATHS changed since $last_tag; no release."
+            echo "bump=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "bump=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Bump the version and push (deck publishes on this push)
+        if: steps.decide.outputs.bump == 'true'
+        run: bash scripts/release_version_bump.sh auto
