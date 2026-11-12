@@ -36,15 +36,15 @@ if (keystorePropertiesFile.exists()) {
 }
 def hasKeystore = keystoreProperties.getProperty("storeFile") != null
 
-// CI 用の「署名なし」モード（雛形 flutterbase・QRgen と同じ）。
+// "Unsigned" mode for CI (same as the flutterbase template and QRgen).
 //
-// NOLUMIA_SIGNING=none を渡すと release から signingConfig を外し、Gradle は
-// 署名しない成果物を出す。署名はビルドの後段で、**アプリのコードを実行しない
-// 別コンテナ**が apksigner / jarsigner で行う（deck の配布の段）。こうすると
-// 署名鍵が pub パッケージや Gradle プラグインから見えなくなる。
+// Passing NOLUMIA_SIGNING=none removes signingConfig from release, and Gradle
+// produces unsigned outputs. Signing happens in a later stage, in a **separate container
+// that does not run the app's code**, with apksigner / jarsigner (deck's deploy stage). This keeps
+// the signing key out of reach of pub packages and Gradle plugins.
 //
-// 手元のビルドや従来の key.properties 方式は今までどおり動く。
-// 詳細は deploy-repo の docs/flutter-signing.md を参照。
+// Local builds and the existing key.properties flow keep working as before.
+// See docs/flutter-signing.md in deploy-repo for details.
 def unsignedRelease = (System.getenv("NOLUMIA_SIGNING") == "none")
 
 // Project-local debug keystore — checked into the repo so every dev and CI
@@ -160,11 +160,11 @@ project.afterEvaluate {
                         def dstName = perAppApkName(output)
                         new File(src.parentFile, dstName).bytes = src.bytes
 
-                        // 署名なしモードでは AGP の出力が app-<type>-unsigned.apk になる。
-                        // Flutter の CLI は app-<type>.apk を決め打ちで探すので、
-                        // 既定名のコピーも置く（中身は unsigned）。
+                        // In unsigned mode AGP outputs app-<type>-unsigned.apk.
+                        // The Flutter CLI looks for app-<type>.apk by fixed name, so
+                        // also put a copy under the default name (its content is unsigned).
                         if (src.name.endsWith("-unsigned.apk")) {
-                            // --split-per-abi では app-<abi>-<type>.apk を ABI ごとに 1 本ずつ置く。
+                            // With --split-per-abi, put one app-<abi>-<type>.apk per ABI.
                             def flutterName = src.name.replace("-unsigned.apk", ".apk")
                             new File(src.parentFile, flutterName).bytes = src.bytes
                         }

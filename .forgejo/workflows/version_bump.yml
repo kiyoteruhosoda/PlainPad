@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main
-    # ⚠ CI の設定（.forgejo/）だけの push では版を上げない（2026-10-25）。台の像の digest は週次の作り直し
-    #   （deploy-repo host/builder-rebuild）が上げるので、上げると毎週アプリが配り直される。
+    # ⚠ Do not bump the version on pushes that only touch CI config (.forgejo/) (2026-10-25). The weekly rebuild
+    #   (deploy-repo host/builder-rebuild) bumps the runner image digests, so bumping would redeploy the app every week.
     paths-ignore:
       - ".forgejo/**"
   workflow_dispatch:
@@ -27,32 +27,32 @@ env:
 permissions:
   contents: write
 
-# 実行場所は nolumialab のセルフホストランナー（2026-09-28 に GitHub から forge へ移した）。
+# Runs on the self-hosted runner on nolumialab (moved from GitHub to forge on 2026-09-28).
 jobs:
   bump-version:
-    # ⚠ **自分の版上げで自分を起こさない。** 下の push は実在の利用者（actions-push）で
-    #   行うので、GITHUB_TOKEN と違って次の workflow を起こす。その 1 回はここで止める。
+    # ⚠ **Do not trigger ourselves with our own version bump.** The push below is made by a real
+    #   user (actions-push), which, unlike GITHUB_TOKEN, triggers the next workflow. Stop that one run here.
     if: github.actor != 'actions-push'
-    # リリースは forge の push の知らせが deck へ積む（nolumiadeck ADR-0119。
-    # 宛先 /api/release/hooks/push/app/plainpad はホストの係 nolumia-forge-links が張る）。
-    # 配ってよいことは deploy-repo の resources/flutter-apps.json が決める。
-    # ここは版を上げて書き戻すだけなので、docker も資格情報も要らない軽い台で走る。
-    # 版上げの commit は [skip ci] 付きでも知らせは届く（skip は workflow にだけ効く）。
+    # Releases are queued to deck by forge's push notification (nolumiadeck ADR-0119;
+    # the hook /api/release/hooks/push/app/plainpad is set up by the host job nolumia-forge-links).
+    # Whether it may be deployed is decided by deploy-repo's resources/flutter-apps.json.
+    # This job only bumps the version and pushes it back, so it runs on a light runner without docker or credentials.
+    # The notification still arrives for the bump commit with [skip ci] (skip only affects workflows).
     runs-on: [self-hosted, nolumialab]
-    # ⚠ **ジョブのイメージに node が要る。** `uses:` の JS アクションは
-    #   ジョブのコンテナの中の node を呼ぶ。
+    # ⚠ **The job image needs node.** JS actions in `uses:` call
+    #   node inside the job container.
     container:
       image: hub.nolumia.com:5000/builder/ci-python311@sha256:da68dafef0d3aff23c1abf1bc4e9d43d8a16f87b8511a637198547c6509744cf
-    # ⚠ 既定は 6 時間。ぶら下がったジョブが台を食い潰すので上限を置く。
+    # ⚠ The default is 6 hours. Set a limit so a hung job does not hog the runner.
     timeout-minutes: 20
     steps:
       - uses: actions/checkout@v5
         with:
           fetch-depth: 0
-          # ⚠ **GITHUB_TOKEN では保護された main へ push できない。** forge の
-          #   pre-receive が Actions の仮の利用者（uid -2）を引けずに 500 を返す
-          #   （上流の未解決の不具合 forgejo/forgejo#11159）。実在の利用者
-          #   actions-push のトークン（kyon の Actions の秘密）で checkout して押す。
+          # ⚠ **GITHUB_TOKEN cannot push to the protected main.** forge's
+          #   pre-receive cannot resolve the Actions pseudo user (uid -2) and returns 500
+          #   (unresolved upstream bug forgejo/forgejo#11159). Check out and push with the token
+          #   of the real user actions-push (an Actions secret of kyon).
           token: ${{ secrets.PUSH_TOKEN }}
 
       - name: Configure git
@@ -78,9 +78,9 @@ jobs:
         run: |
           VERSION="v${{ steps.bump.outputs.new_version }}"
           git add pubspec.yaml
-          # ⚠ **`[skip ci]` を外さない。** actions-push の push は GITHUB_TOKEN と違って
-          #   workflow を起こす。起きると forge は同じ枝の古い run（＝この run）を打ち切り、
-          #   後ろの段が走らないまま終わる（2026-09-27 に実測）。
+          # ⚠ **Do not remove `[skip ci]`.** Unlike GITHUB_TOKEN, a push by actions-push
+          #   triggers workflows. When triggered, forge cancels the older run on the same branch (this run),
+          #   and it ends without running the later steps (measured on 2026-09-27).
           git commit -m "chore: bump version to ${{ steps.bump.outputs.new_version_full }} [skip ci]"
           if git rev-parse "refs/tags/$VERSION" >/dev/null 2>&1; then
             echo "Tag $VERSION already exists, skipping tag creation."

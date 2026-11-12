@@ -7,23 +7,23 @@ import 'package:plainpad/shared/licenses/app_license_registry.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-  // ステータスバーをシースルーに設定
+  // Make the status bar transparent
   SystemChrome.setSystemUIOverlayStyle(
     const SystemUiOverlayStyle(
       statusBarColor: Colors.transparent,
     ),
   );
 
-  // 縦向き固定 (必要に応じてコメントアウト)
+  // Lock to portrait (comment out if needed)
   await SystemChrome.setPreferredOrientations([
     DeviceOrientation.portraitUp,
     DeviceOrientation.portraitDown,
   ]);
 
-  // 依存性注入の初期化
+  // Initialize dependency injection
   await setupServiceLocator();
 
-  // LicenseRegistry に独自ライセンスを登録
+  // Register our own licenses with LicenseRegistry
   AppLicenseRegistrar.register();
 
   runApp(const AppWidget());

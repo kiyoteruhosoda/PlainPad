@@ -5,7 +5,7 @@ import 'package:plainpad/shared/theme/app_radius.dart';
 import 'package:plainpad/shared/theme/app_spacing.dart';
 import 'package:plainpad/shared/theme/app_text_styles.dart';
 
-/// デジタル庁デザインシステム準拠のアプリテーマ
+/// App theme following the Digital Agency (Japan) design system
 class AppTheme {
   AppTheme._();
 
