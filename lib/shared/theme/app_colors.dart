@@ -86,8 +86,9 @@ class AppColors {
 
   // ─── Semantic: Brand ───────────────────────────────────────────────
   /// The app's theme color (brand color).
-  /// Used as the overall primary accent, and acts as the app-wide consistent identifying color,
-  /// e.g. on LicensePage, About and the app icon background.
+  /// Used as the overall primary accent, and acts as the app-wide
+  /// consistent identifying color, e.g. on LicensePage, About and the
+  /// app icon background.
   static const Color brand = blue800;
   static const Color brandContainer = blue100;
   static const Color onBrand = white;
