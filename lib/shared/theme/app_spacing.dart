@@ -1,5 +1,5 @@
-/// デジタル庁デザインシステム スペーシングトークン
-/// 4pxグリッドに基づくスペーシング
+/// Digital Agency (Japan) design system spacing tokens
+/// Spacing based on a 4px grid
 class AppSpacing {
   AppSpacing._();
 

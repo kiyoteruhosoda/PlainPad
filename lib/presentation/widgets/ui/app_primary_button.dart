@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:plainpad/shared/theme/theme.dart';
 
-/// デジタル庁デザインシステム準拠 プライマリボタン
+/// Primary button following the Digital Agency (Japan) design system
 class AppPrimaryButton extends StatelessWidget {
   const AppPrimaryButton({
     super.key,
@@ -53,7 +53,7 @@ class AppPrimaryButton extends StatelessWidget {
   }
 }
 
-/// デジタル庁デザインシステム準拠 セカンダリボタン
+/// Secondary button following the Digital Agency (Japan) design system
 class AppSecondaryButton extends StatelessWidget {
   const AppSecondaryButton({
     super.key,

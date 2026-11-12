@@ -1,5 +1,5 @@
 # Azure DevOps CI/CD Pipeline for Flutter
-# デジタル庁デザインシステム準拠 FlutterBase
+# FlutterBase following the Digital Agency (Japan) design system
 
 trigger:
   branches:
@@ -53,7 +53,7 @@ stages:
               jdkSourceOption: PreInstalled
 
           - script: |
-              # Flutter SDKのインストール
+              # Install the Flutter SDK
               git clone https://github.com/flutter/flutter.git \
                 --depth 1 \
                 --branch stable \
@@ -173,7 +173,7 @@ stages:
           - script: flutter pub get
             displayName: 'Install Dependencies'
 
-          # Keystore を Azure Pipelines の SecureFiles から取得
+          # Fetch the keystore from Azure Pipelines SecureFiles
           - task: DownloadSecureFile@1
             displayName: 'Download Keystore'
             name: keystore
@@ -291,7 +291,7 @@ stages:
           - script: flutter pub get
             displayName: 'Install Dependencies'
 
-          # 証明書・プロビジョニングプロファイルのインストール
+          # Install certificates and provisioning profiles
           - task: InstallAppleCertificate@2
             displayName: 'Install Signing Certificate'
             inputs:
@@ -351,8 +351,8 @@ stages:
                 - download: current
                   artifact: android-release
 
-                # App Center CLI でのデプロイ
-                # 必要に応じて Firebase App Distribution や他の配布サービスに変更
+                # Deploy with the App Center CLI
+                # Switch to Firebase App Distribution or another distribution service as needed
                 - task: AppCenterDistribute@3
                   displayName: 'Distribute Android to App Center'
                   inputs:
