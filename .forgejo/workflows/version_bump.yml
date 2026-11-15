@@ -33,7 +33,7 @@ jobs:
     #   `exec: "node": executable file not found`.
     #   This job only uses git and bash, so the lighter image is enough.
     container:
-      image: hub.nolumia.com:5000/builder/ci-python311@sha256:da68dafef0d3aff23c1abf1bc4e9d43d8a16f87b8511a637198547c6509744cf
+      image: hub.nolumia.com:5000/builder/ci-python311@sha256:fa95b7df0e4b00104ca16048d1aef5ea1c07f1d0b04f7d352d3521244221e79d
     # ⚠ The default is 6 hours. A hung job would eat the runner, so set a ceiling.
     timeout-minutes: 20
     steps:
